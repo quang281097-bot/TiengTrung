@@ -27,10 +27,10 @@ export default function TopHeader() {
         <button type="button" className="lx-icon-button" aria-label="Thông báo">
           <Icon name="bell" size={17} />
         </button>
-        <div className="lx-user">
+        <Link href="/profile" className="lx-user" aria-label={`Tài khoản của ${learner.name}`}>
           <p className="lx-user-name">{learner.name}</p>
           <p className="lx-user-role">{learner.role}</p>
-        </div>
+        </Link>
       </div>
     </header>
   );

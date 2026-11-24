@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
-import { courseLevels, primaryNav, secondaryNav } from '../../data/homeData';
+import { courseLevels, examNav, primaryNav, skillNav } from '../../data/homeData';
 import type { NavLink } from '../../data/homeData';
 import Icon from '../ui/Icon';
 
@@ -39,45 +39,53 @@ export default function Sidebar() {
         <span className="lx-brand-tagline">Học mỗi ngày, tiến xa hơn</span>
       </Link>
 
-      <p className="lx-nav-heading">Không gian học tập</p>
+      <div className="lx-sidebar-scroll">
+        <p className="lx-nav-heading">Không gian học tập</p>
+        <nav className="lx-nav" aria-label="Không gian học tập">
+          {primaryNav.map((item) => (
+            <NavItem key={item.id} item={item} pathname={pathname} />
+          ))}
 
-      <nav className="lx-nav">
-        {primaryNav.map((item) => (
-          <NavItem key={item.id} item={item} pathname={pathname} />
-        ))}
+          <button
+            type="button"
+            className={`lx-nav-item lx-nav-toggle${coursesActive ? ' is-active' : ''}`}
+            aria-expanded={coursesOpen}
+            aria-controls="lx-course-levels"
+            onClick={() => setCoursesOpen((open) => !open)}
+          >
+            <Icon name="book" />
+            <span>Khoá học</span>
+            <Icon name="chevron-down" size={16} className="lx-nav-chevron" />
+          </button>
 
-        <button
-          type="button"
-          className={`lx-nav-item lx-nav-toggle${coursesActive ? ' is-active' : ''}`}
-          aria-expanded={coursesOpen}
-          aria-controls="lx-course-levels"
-          onClick={() => setCoursesOpen((open) => !open)}
-        >
-          <Icon name="book" />
-          <span>Khoá học</span>
-          <Icon name="chevron-down" size={16} className="lx-nav-chevron" />
-        </button>
+          {coursesOpen && (
+            <ul id="lx-course-levels" className="lx-subnav">
+              {courseLevels.map((level) => (
+                <li key={level.id}>
+                  <Link
+                    href={level.href}
+                    className={`lx-subnav-item${level.current ? ' is-current' : ''}`}
+                  >
+                    <span>{level.label}</span>
+                    {level.current && <small>Đang học</small>}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
 
-        {coursesOpen && (
-          <ul id="lx-course-levels" className="lx-subnav">
-            {courseLevels.map((level) => (
-              <li key={level.id}>
-                <Link
-                  href={level.href}
-                  className={`lx-subnav-item${level.current ? ' is-current' : ''}`}
-                >
-                  <span>{level.label}</span>
-                  {level.current && <small>Đang học</small>}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+          {examNav.map((item) => (
+            <NavItem key={item.id} item={item} pathname={pathname} />
+          ))}
+        </nav>
 
-        {secondaryNav.map((item) => (
-          <NavItem key={item.id} item={item} pathname={pathname} />
-        ))}
-      </nav>
+        <p className="lx-nav-heading lx-nav-heading-next">Luyện kỹ năng</p>
+        <nav className="lx-nav" aria-label="Luyện kỹ năng">
+          {skillNav.map((item) => (
+            <NavItem key={item.id} item={item} pathname={pathname} />
+          ))}
+        </nav>
+      </div>
 
       <div className="lx-sidebar-foot">
         <div className="lx-motto">

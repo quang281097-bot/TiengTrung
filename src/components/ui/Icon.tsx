@@ -12,7 +12,20 @@ export type IconName =
   | 'check'
   | 'arrow-right'
   | 'external'
-  | 'chevron-down';
+  | 'chevron-down'
+  | 'chevron-left'
+  | 'chevron-right'
+  | 'arrow-left'
+  | 'play'
+  | 'stop'
+  | 'volume'
+  | 'headphones'
+  | 'mic'
+  | 'layers'
+  | 'rotate'
+  | 'target'
+  | 'bulb'
+  | 'x';
 
 const paths: Record<IconName, JSX.Element> = {
   user: (
@@ -67,6 +80,52 @@ const paths: Record<IconName, JSX.Element> = {
   'arrow-right': <path d="M5 12h14M13 6l6 6-6 6" />,
   external: <path d="M7 17 17 7M8 7h9v9" />,
   'chevron-down': <path d="m6 9 6 6 6-6" />,
+  'chevron-left': <path d="m15 18-6-6 6-6" />,
+  'chevron-right': <path d="m9 18 6-6-6-6" />,
+  'arrow-left': <path d="M19 12H5M11 18l-6-6 6-6" />,
+  play: <path d="M7 4.5v15a.8.8 0 0 0 1.2.7l12-7.5a.8.8 0 0 0 0-1.4l-12-7.5a.8.8 0 0 0-1.2.7z" />,
+  stop: <rect x="6" y="6" width="12" height="12" rx="2" />,
+  volume: (
+    <>
+      <path d="M11 5 6 9H3v6h3l5 4z" />
+      <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" />
+    </>
+  ),
+  headphones: (
+    <path d="M3 14h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-7a9 9 0 0 1 18 0v7a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3" />
+  ),
+  mic: (
+    <>
+      <rect x="9" y="2" width="6" height="12" rx="3" />
+      <path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18v4M8 22h8" />
+    </>
+  ),
+  layers: (
+    <>
+      <path d="m12 2 10 5-10 5L2 7z" />
+      <path d="m2 17 10 5 10-5M2 12l10 5 10-5" />
+    </>
+  ),
+  rotate: (
+    <>
+      <path d="M3 12a9 9 0 1 0 3-6.7L3 8" />
+      <path d="M3 3v5h5" />
+    </>
+  ),
+  target: (
+    <>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="5" />
+      <circle cx="12" cy="12" r="1" />
+    </>
+  ),
+  bulb: (
+    <>
+      <path d="M9 18h6M10 22h4" />
+      <path d="M12 2a7 7 0 0 0-4 12.7V16h8v-1.3A7 7 0 0 0 12 2z" />
+    </>
+  ),
+  x: <path d="M18 6 6 18M6 6l12 12" />,
 };
 
 export default function Icon({

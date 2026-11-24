@@ -41,6 +41,7 @@ export const todayLabel = 'Thứ Hai, 23/11/2026';
 export const primaryNav: NavLink[] = [
   { id: 'account', label: 'Tài khoản', href: '/profile', icon: 'user' },
   { id: 'home', label: 'Trang chủ', href: '/', icon: 'home' },
+  { id: 'learn', label: 'Học ngay', href: '/learn', icon: 'play' },
 ];
 
 export const courseLevels: CourseLevel[] = [
@@ -57,6 +58,7 @@ export const pageTitles: Record<string, string> = {
   '/': 'Trang chủ',
   '/dashboard': 'Trang chủ',
   '/profile': 'Tài khoản',
+  '/learn': 'Học ngay',
   '/lessons': 'Khoá học',
   '/practice': 'Luyện đọc',
   '/writing': 'Luyện viết',
@@ -70,18 +72,22 @@ export const pageTitles: Record<string, string> = {
   '/settings': 'Cài đặt',
 };
 
-export const secondaryNav: NavLink[] = [
+export const examNav: NavLink[] = [{ id: 'exam', label: 'Thi HSK', href: '/hsk', icon: 'exam' }];
+
+export const skillNav: NavLink[] = [
+  { id: 'review', label: 'Ôn tập', href: '/review', icon: 'layers' },
+  { id: 'listening', label: 'Luyện nghe', href: '/listening', icon: 'headphones' },
+  { id: 'speaking', label: 'Luyện nói', href: '/speaking', icon: 'mic' },
   { id: 'reading', label: 'Luyện đọc', href: '/practice', icon: 'read' },
   { id: 'writing', label: 'Luyện viết', href: '/writing', icon: 'pen' },
-  { id: 'exam', label: 'Thi HSK', href: '/hsk', icon: 'exam' },
 ];
 
 export const mobileNav: NavLink[] = [
   { id: 'home', label: 'Trang chủ', href: '/', icon: 'home' },
-  { id: 'courses', label: 'Khoá học', href: '/lessons', icon: 'book' },
-  { id: 'reading', label: 'Luyện đọc', href: '/practice', icon: 'read' },
-  { id: 'writing', label: 'Luyện viết', href: '/writing', icon: 'pen' },
-  { id: 'account', label: 'Tài khoản', href: '/profile', icon: 'user' },
+  { id: 'learn', label: 'Học ngay', href: '/learn', icon: 'play' },
+  { id: 'review', label: 'Ôn tập', href: '/review', icon: 'layers' },
+  { id: 'listening', label: 'Nghe', href: '/listening', icon: 'headphones' },
+  { id: 'speaking', label: 'Nói', href: '/speaking', icon: 'mic' },
 ];
 
 export const homeStats: HomeStat[] = [
@@ -115,7 +121,7 @@ export const recentLesson = {
   partsDone: 2,
   partsTotal: 5,
   remaining: 'Khoảng 10 phút còn lại',
-  href: '/lessons',
+  href: '/learn',
 };
 
 export const currentCourse = {

@@ -61,14 +61,30 @@ body:has(.lx-shell) {
   padding: 28px 16px 20px;
   border-right: 1px solid var(--lx-line);
   background: var(--lx-sidebar);
+  overflow: hidden;
+}
+
+/* Chỉ phần menu cuộn; logo và chân sidebar luôn hiển thị. */
+.lx-sidebar-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin: 0 -16px;
+  padding: 0 16px 20px;
   overflow-y: auto;
   overscroll-behavior: contain;
   /* Vẫn cuộn được nhưng không hiện thanh cuộn chiếm chỗ → nội dung sidebar không bị đẩy lệch. */
   scrollbar-width: none;
+  /* Mờ dần ở mép dưới để gợi ý còn mục bên dưới khi menu dài hơn màn hình. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
+  mask-image: linear-gradient(to bottom, #000 calc(100% - 24px), transparent);
 }
 
-.lx-sidebar::-webkit-scrollbar {
+.lx-sidebar-scroll::-webkit-scrollbar {
   display: none;
+}
+
+.lx-sidebar .lx-nav-heading-next {
+  margin-top: 22px;
 }
 
 .lx-brand {
@@ -181,8 +197,8 @@ body:has(.lx-shell) {
 }
 
 .lx-sidebar-foot {
-  margin-top: auto;
-  padding-top: 24px;
+  flex-shrink: 0;
+  padding-top: 12px;
 }
 
 .lx-motto {
@@ -274,6 +290,16 @@ body:has(.lx-shell) {
 .lx-icon-button:hover {
   background: var(--lx-line-soft);
   color: var(--lx-ink);
+}
+
+.lx-user {
+  padding: 4px 8px;
+  margin-right: -8px;
+  border-radius: 8px;
+}
+
+.lx-user:hover {
+  background: var(--lx-line-soft);
 }
 
 .lx-user-name {
@@ -1053,16 +1079,23 @@ body:has(.lx-shell) {
     padding-bottom: 4px;
   }
 
-  .lx-motto {
-    display: none;
-  }
-
   .lx-sidebar-foot {
-    padding-top: 14px;
+    padding-top: 6px;
   }
 
   .lx-help-link {
     margin-top: 0;
+  }
+}
+
+/* Menu đã dài hơn: chỉ hiện thẻ "Chậm mà chắc" khi màn hình đủ cao. */
+@media (max-height: 960px) {
+  .lx-motto {
+    display: none;
+  }
+
+  .lx-help-link {
+    margin-top: 4px;
   }
 }
 

@@ -1,0 +1,1750 @@
+/* lǎoshi. — Học ngay, Ôn tập, Luyện nghe, Luyện nói */
+
+.lx-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.lx-title-hanzi {
+  margin-left: 12px;
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  font-size: 0.75em;
+  font-weight: 500;
+  color: var(--lx-red);
+  white-space: nowrap;
+}
+
+.lx-row-practice {
+  grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+  align-items: start;
+}
+
+.lx-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.lx-side-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lx-thumb-wide {
+  min-height: 150px;
+}
+
+/* ---------- Buttons ---------- */
+
+button.lx-button {
+  border: 0;
+  cursor: pointer;
+}
+
+.lx-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.lx-button-soft {
+  background: var(--lx-sage-soft);
+  color: var(--lx-forest);
+}
+
+.lx-button-soft:hover {
+  background: #d8e2cd;
+}
+
+.lx-icon-button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.lx-speak {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--lx-line);
+  border-radius: 50%;
+  background: var(--lx-surface);
+  color: var(--lx-forest);
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.lx-speak.is-small {
+  width: 28px;
+  height: 28px;
+}
+
+.lx-speak:hover {
+  background: var(--lx-sage-soft);
+}
+
+.lx-speak.is-active {
+  border-color: transparent;
+  background: var(--lx-forest);
+  color: #f2f5ef;
+}
+
+.lx-speak:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.lx-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.lx-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  border: 1px solid var(--lx-line);
+  border-radius: 999px;
+  background: var(--lx-surface);
+  font-size: 12px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-toggle-dot {
+  width: 8px;
+  height: 8px;
+  border: 1.5px solid currentColor;
+  border-radius: 50%;
+}
+
+.lx-toggle[aria-pressed='true'] {
+  border-color: transparent;
+  background: var(--lx-sage-soft);
+  color: var(--lx-forest);
+  font-weight: 600;
+}
+
+.lx-toggle[aria-pressed='true'] .lx-toggle-dot {
+  border-color: var(--lx-forest);
+  background: var(--lx-forest);
+}
+
+.lx-notice {
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #fbf3e4;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #7a5a1e;
+}
+
+.lx-notice.is-error {
+  background: #fbe9e6;
+  color: var(--lx-red-deep);
+}
+
+.lx-pinyin {
+  font-size: 13px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-meaning {
+  font-size: 12.5px;
+  color: var(--lx-muted);
+}
+
+.lx-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12.5px;
+  color: var(--lx-ink-soft);
+  cursor: pointer;
+}
+
+.lx-check input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--lx-forest);
+}
+
+/* ---------- Học ngay: stepper ---------- */
+
+.lx-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px 20px;
+}
+
+.lx-steps-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-step {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  text-align: left;
+  color: var(--lx-muted);
+  font-size: 13px;
+}
+
+.lx-step:hover {
+  background: var(--lx-line-soft);
+}
+
+.lx-step-dot {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  border: 1.5px solid var(--lx-line);
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--lx-surface);
+}
+
+.lx-step.is-done {
+  color: var(--lx-ink-soft);
+}
+
+.lx-step.is-done .lx-step-dot {
+  border-color: transparent;
+  background: var(--lx-sage-soft);
+  color: var(--lx-forest);
+}
+
+.lx-step.is-current {
+  background: var(--lx-sage-soft);
+  color: var(--lx-ink);
+  font-weight: 600;
+}
+
+.lx-step.is-current .lx-step-dot {
+  border-color: transparent;
+  background: var(--lx-forest);
+  color: #f2f5ef;
+}
+
+.lx-step-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- Học ngay: stage ---------- */
+
+.lx-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  scroll-margin-top: 80px;
+}
+
+.lx-stage-kicker {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--lx-red);
+}
+
+.lx-stage-title {
+  margin-top: 6px !important;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.lx-stage-intro {
+  margin-top: 6px !important;
+  font-size: 13px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-stage-body {
+  animation: lx-fade-in 0.25s ease;
+}
+
+.lx-stage-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.lx-stage-foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--lx-line-soft);
+}
+
+@keyframes lx-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lx-word-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-word {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--lx-line);
+  border-radius: 10px;
+  background: var(--lx-surface);
+}
+
+.lx-word-copy {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 2px 10px;
+  min-width: 0;
+}
+
+.lx-word-hanzi {
+  grid-row: span 2;
+  font-size: 26px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.lx-word-pinyin {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--lx-forest);
+}
+
+.lx-word-meaning {
+  font-size: 12px;
+  color: var(--lx-muted);
+}
+
+.lx-patterns {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-pattern {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: var(--lx-line-soft);
+}
+
+.lx-pattern-structure {
+  align-self: flex-start;
+  padding: 3px 9px;
+  border-radius: 5px;
+  background: var(--lx-surface);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lx-red);
+}
+
+.lx-pattern-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lx-sentence {
+  font-size: 21px;
+  font-weight: 500;
+}
+
+/* ---------- Hội thoại ---------- */
+
+.lx-dialogue {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  max-width: 88%;
+}
+
+.lx-line.is-right {
+  flex-direction: row-reverse;
+  align-self: flex-end;
+}
+
+.lx-avatar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--lx-sage-soft);
+  font-size: 15px;
+  color: var(--lx-forest);
+}
+
+.lx-line.is-right .lx-avatar {
+  background: var(--lx-peach);
+  color: var(--lx-red-deep);
+}
+
+.lx-bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 14px 12px;
+  border: 1px solid var(--lx-line);
+  border-radius: 4px 14px 14px 14px;
+  background: var(--lx-surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lx-line.is-right .lx-bubble {
+  border-radius: 14px 4px 14px 14px;
+  background: #fdf6f1;
+}
+
+.lx-line.is-playing .lx-bubble {
+  border-color: var(--lx-forest);
+  box-shadow: 0 0 0 3px rgba(31, 67, 52, 0.12);
+}
+
+.lx-bubble-name {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--lx-muted);
+}
+
+.lx-bubble-text {
+  padding: 0;
+  text-align: left;
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--lx-ink);
+}
+
+.lx-bubble-text:hover {
+  color: var(--lx-forest);
+}
+
+/* ---------- Câu hỏi trắc nghiệm ---------- */
+
+.lx-quiz-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lx-question {
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid var(--lx-line);
+  border-radius: 10px;
+  min-width: 0;
+}
+
+.lx-question legend {
+  float: left;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lx-question-index {
+  margin-right: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lx-red);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.lx-options {
+  clear: both;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+}
+
+.lx-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--lx-line);
+  border-radius: 8px;
+  background: var(--lx-surface);
+  text-align: left;
+  font-size: 13.5px;
+  color: var(--lx-ink);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.lx-option:not(:disabled):hover {
+  border-color: var(--lx-forest);
+  background: var(--lx-sage-soft);
+}
+
+.lx-option:disabled {
+  cursor: default;
+}
+
+.lx-option-key {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: var(--lx-line-soft);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lx-ink-soft);
+}
+
+.lx-option-text {
+  flex: 1;
+}
+
+.lx-option.is-correct {
+  border-color: #8fb381;
+  background: var(--lx-sage-soft);
+  color: var(--lx-forest);
+  font-weight: 600;
+}
+
+.lx-option.is-correct .lx-option-key {
+  background: var(--lx-forest);
+  color: #fff;
+}
+
+.lx-option.is-wrong {
+  border-color: #e3a49b;
+  background: #fbe9e6;
+  color: var(--lx-red-deep);
+}
+
+.lx-option.is-wrong .lx-option-key {
+  background: var(--lx-red);
+  color: #fff;
+}
+
+.lx-option.is-dim {
+  opacity: 0.55;
+}
+
+.lx-feedback {
+  margin-top: 10px !important;
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.lx-feedback.is-correct {
+  color: var(--lx-forest);
+}
+
+.lx-feedback.is-wrong {
+  color: var(--lx-red-deep);
+}
+
+.lx-quiz-score {
+  font-size: 13px;
+  color: var(--lx-ink-soft);
+}
+
+/* ---------- Tổng kết ---------- */
+
+.lx-summary,
+.lx-review-done {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+}
+
+.lx-summary {
+  padding: 12px 0;
+}
+
+.lx-summary h3 {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.lx-summary p {
+  max-width: 420px;
+  font-size: 13px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-summary-badge {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--lx-sage-soft);
+  color: var(--lx-forest);
+}
+
+.lx-summary-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  width: 100%;
+  max-width: 420px;
+  margin: 8px 0 !important;
+}
+
+.lx-summary-stats div {
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--lx-line-soft);
+}
+
+.lx-summary-stats dt {
+  font-size: 11.5px;
+  color: var(--lx-muted);
+}
+
+.lx-summary-stats dd {
+  margin: 4px 0 0;
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.lx-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ---------- Aside: mục tiêu, ghi nhớ ---------- */
+
+.lx-goals {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-goals li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-goals svg {
+  flex-shrink: 0;
+  color: var(--lx-red);
+}
+
+.lx-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 0;
+}
+
+.lx-notes div {
+  padding-left: 12px;
+  border-left: 2px solid var(--lx-sage);
+}
+
+.lx-notes dt {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.lx-notes dd {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--lx-ink-soft);
+}
+
+/* ---------- Ôn tập ---------- */
+
+.lx-review {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 24px 24px;
+}
+
+.lx-flashcard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  width: 100%;
+  min-height: 280px;
+  padding: 28px 20px;
+  border: 1px solid var(--lx-line);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(189, 209, 177, 0.25), transparent 60%),
+    var(--lx-surface);
+  text-align: center;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lx-flashcard:hover {
+  border-color: var(--lx-sage);
+  box-shadow: 0 6px 20px rgba(29, 39, 33, 0.06);
+}
+
+.lx-flash-hanzi {
+  font-size: 64px;
+  font-weight: 500;
+  line-height: 1.1;
+  color: var(--lx-ink);
+}
+
+.lx-flash-hint {
+  font-size: 12.5px;
+  color: var(--lx-muted);
+}
+
+.lx-flash-back {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  animation: lx-fade-in 0.25s ease;
+}
+
+.lx-flash-pinyin {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--lx-forest);
+}
+
+.lx-flash-meaning {
+  font-size: 16px;
+  color: var(--lx-ink);
+}
+
+.lx-flash-example {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: var(--lx-line-soft);
+  font-size: 12.5px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-flash-example span:first-child {
+  font-size: 16px;
+  color: var(--lx-ink);
+}
+
+.lx-review-tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--lx-muted);
+}
+
+.lx-review-tools span + .lx-speak {
+  margin-left: 10px;
+}
+
+.lx-review-flip {
+  align-self: center;
+  min-width: 180px;
+  justify-content: center;
+}
+
+.lx-rate {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.lx-rate-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px 12px 10px;
+  border: 1px solid var(--lx-line);
+  border-radius: 10px;
+  background: var(--lx-surface);
+  text-align: left;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.lx-rate-btn strong {
+  font-size: 14px;
+}
+
+.lx-rate-btn small {
+  font-size: 11px;
+  color: var(--lx-muted);
+}
+
+.lx-rate-btn kbd {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 0 5px;
+  border: 1px solid var(--lx-line);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 10px;
+  color: var(--lx-muted);
+}
+
+.lx-rate-btn.tone-again strong {
+  color: var(--lx-red);
+}
+
+.lx-rate-btn.tone-again:hover {
+  border-color: #e3a49b;
+  background: #fbe9e6;
+}
+
+.lx-rate-btn.tone-hard strong {
+  color: #a26a12;
+}
+
+.lx-rate-btn.tone-hard:hover {
+  border-color: #e8c98f;
+  background: #fbf3e4;
+}
+
+.lx-rate-btn.tone-good strong,
+.lx-rate-btn.tone-easy strong {
+  color: var(--lx-forest);
+}
+
+.lx-rate-btn.tone-good:hover,
+.lx-rate-btn.tone-easy:hover {
+  border-color: #8fb381;
+  background: var(--lx-sage-soft);
+}
+
+.lx-review-done {
+  padding: 32px 24px;
+}
+
+.lx-review-weak {
+  width: 100%;
+  max-width: 460px;
+}
+
+.lx-review-weak ul {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-review-weak li {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #fbe9e6;
+  font-size: 12px;
+  color: var(--lx-red-deep);
+}
+
+.lx-review-weak li span {
+  margin-right: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.lx-mini-bars {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  align-items: end;
+  gap: 6px;
+  height: 120px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-mini-bars li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  height: 100%;
+}
+
+.lx-mini-track {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 0;
+}
+
+.lx-mini-value {
+  height: 18px;
+  font-size: 10.5px;
+  line-height: 18px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-mini-bar {
+  display: block;
+  width: min(22px, 70%);
+  border-radius: 5px 5px 2px 2px;
+  background: var(--lx-sage);
+}
+
+.lx-mini-label {
+  font-size: 10px;
+  color: var(--lx-muted);
+  white-space: nowrap;
+}
+
+.lx-mini-bars .is-today .lx-mini-bar {
+  background: var(--lx-red);
+}
+
+.lx-mini-bars .is-today .lx-mini-value,
+.lx-mini-bars .is-today .lx-mini-label {
+  color: var(--lx-red);
+  font-weight: 600;
+}
+
+.lx-decks {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-decks strong {
+  color: var(--lx-ink);
+}
+
+.lx-due {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--lx-red);
+  white-space: nowrap;
+}
+
+/* ---------- Luyện nghe ---------- */
+
+.lx-player {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 22px 24px 24px;
+}
+
+.lx-player-top {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.lx-player-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  background: var(--lx-forest);
+  font-family: 'Noto Serif SC', 'Songti SC', 'SimSun', serif;
+  font-size: 28px;
+  color: #dfe9d2;
+}
+
+.lx-player-info {
+  min-width: 0;
+}
+
+.lx-player-title {
+  margin-top: 6px !important;
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.lx-player-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: var(--lx-line-soft);
+}
+
+.lx-play {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--lx-red);
+  color: #fff;
+  box-shadow: 0 6px 16px rgba(196, 70, 58, 0.28);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.lx-play:hover {
+  background: var(--lx-red-deep);
+}
+
+.lx-play:active {
+  transform: scale(0.96);
+}
+
+.lx-play.is-playing {
+  background: var(--lx-forest);
+  box-shadow: 0 6px 16px rgba(31, 67, 52, 0.25);
+}
+
+.lx-play:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.lx-player-progress {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.lx-segments {
+  display: flex;
+  gap: 4px;
+}
+
+.lx-segments span {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: #dcd9cf;
+  transition: background 0.2s ease;
+}
+
+.lx-segments .is-past {
+  background: #9fbb92;
+}
+
+.lx-segments .is-now {
+  background: var(--lx-forest);
+}
+
+.lx-segmented {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: 3px;
+  border-radius: 8px;
+  background: var(--lx-surface);
+}
+
+.lx-segmented button {
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-segmented button[aria-pressed='true'] {
+  background: var(--lx-forest);
+  color: #f2f5ef;
+  font-weight: 600;
+}
+
+.lx-transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lx-transcript-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lx-transcript-hidden {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px;
+  border: 1px dashed var(--lx-line);
+  border-radius: 10px;
+  font-size: 12.5px;
+  color: var(--lx-muted);
+}
+
+.lx-transcript-hidden svg {
+  flex-shrink: 0;
+  color: var(--lx-sage);
+}
+
+.lx-quiz-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 24px 24px;
+}
+
+.lx-playlist {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-playlist-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 8px;
+  border-radius: 10px;
+  text-align: left;
+  color: var(--lx-muted);
+}
+
+.lx-playlist-item:hover {
+  background: var(--lx-line-soft);
+}
+
+.lx-playlist-item.is-current {
+  background: var(--lx-sage-soft);
+  color: var(--lx-forest);
+}
+
+.lx-playlist-art {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: var(--lx-peach);
+  font-size: 13px;
+  color: var(--lx-red-deep);
+}
+
+.lx-playlist-item.is-current .lx-playlist-art {
+  background: var(--lx-forest);
+  color: #dfe9d2;
+}
+
+.lx-playlist-copy {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.lx-playlist-copy strong {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--lx-ink);
+}
+
+.lx-playlist-copy small {
+  font-size: 11.5px;
+  color: var(--lx-muted);
+}
+
+.lx-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  list-style: none;
+  counter-reset: tip;
+}
+
+.lx-tips li {
+  position: relative;
+  padding-left: 30px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--lx-ink-soft);
+  counter-increment: tip;
+}
+
+.lx-tips li::before {
+  content: counter(tip);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--lx-sage-soft);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--lx-forest);
+}
+
+/* ---------- Luyện nói ---------- */
+
+.lx-speak-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 22px 24px 26px;
+}
+
+.lx-pager {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lx-ruby {
+  padding: 18px 0 4px;
+  font-size: 40px;
+  font-weight: 500;
+  line-height: 1.9;
+  text-align: center;
+  color: var(--lx-ink);
+}
+
+.lx-ruby ruby {
+  margin: 0 3px;
+  ruby-position: over;
+  transition: color 0.2s ease;
+}
+
+.lx-ruby rt {
+  font-family: var(--font-be-vietnam), 'Be Vietnam Pro', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--lx-muted);
+}
+
+.lx-ruby ruby.is-hit {
+  color: var(--lx-forest);
+}
+
+.lx-ruby ruby.is-miss {
+  color: var(--lx-red);
+  text-decoration: underline dotted 2px;
+  text-underline-offset: 8px;
+}
+
+.lx-ruby ruby.is-miss rt {
+  color: var(--lx-red);
+}
+
+.lx-ruby-punct {
+  color: var(--lx-muted);
+}
+
+.lx-speak-meaning {
+  font-size: 14px;
+  text-align: center;
+  color: var(--lx-ink-soft);
+}
+
+.lx-speak-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.lx-mic-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0 4px;
+}
+
+.lx-mic {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: var(--lx-red);
+  color: #fff;
+  box-shadow: 0 8px 22px rgba(196, 70, 58, 0.3);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.lx-mic:hover {
+  background: var(--lx-red-deep);
+}
+
+.lx-mic:active {
+  transform: scale(0.96);
+}
+
+.lx-mic:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.lx-mic.is-recording {
+  background: var(--lx-forest);
+  box-shadow: 0 8px 22px rgba(31, 67, 52, 0.3);
+}
+
+.lx-mic.is-recording::before,
+.lx-mic.is-recording::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--lx-forest);
+  border-radius: 50%;
+  animation: lx-pulse 1.6s ease-out infinite;
+}
+
+.lx-mic.is-recording::after {
+  animation-delay: 0.8s;
+}
+
+@keyframes lx-pulse {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+.lx-mic-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--lx-ink-soft);
+}
+
+.lx-heard {
+  font-size: 18px;
+  color: var(--lx-forest);
+}
+
+.lx-result {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 18px;
+  border-radius: 12px;
+  background: var(--lx-line-soft);
+  animation: lx-fade-in 0.25s ease;
+  --ring: var(--lx-forest);
+}
+
+.lx-result.tone-good {
+  --ring: #a26a12;
+}
+
+.lx-result.tone-try {
+  --ring: var(--lx-red);
+}
+
+.lx-score {
+  position: relative;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  flex-shrink: 0;
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  background: conic-gradient(var(--ring) calc(var(--score) * 1%), #dcd9cf 0);
+}
+
+.lx-score::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: var(--lx-surface);
+}
+
+.lx-score strong,
+.lx-score span {
+  position: relative;
+  line-height: 1.1;
+}
+
+.lx-score strong {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--ring);
+}
+
+.lx-score span {
+  font-size: 10px;
+  color: var(--lx-muted);
+}
+
+.lx-result-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.lx-result-label {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--ring);
+}
+
+.lx-result-hint {
+  font-size: 12.5px;
+  color: var(--lx-ink-soft);
+}
+
+.lx-playback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.lx-playback audio {
+  flex: 1;
+  min-width: 220px;
+  height: 38px;
+}
+
+.lx-speak-next {
+  align-self: flex-end;
+}
+
+.lx-tip {
+  display: flex;
+  gap: 14px;
+  padding: 18px 20px;
+  background: #fbf3e4;
+  border-color: transparent;
+}
+
+.lx-tip-icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: #f5e2bd;
+  color: #a26a12;
+}
+
+.lx-tip p {
+  margin-top: 4px !important;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--lx-ink-soft);
+}
+
+.lx-sentence-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-sentence-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 2px 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.lx-sentence-item:hover {
+  background: var(--lx-line-soft);
+}
+
+.lx-sentence-item.is-current {
+  background: var(--lx-sage-soft);
+}
+
+.lx-sentence-hanzi {
+  font-size: 15px;
+  color: var(--lx-ink);
+}
+
+.lx-sentence-vi {
+  grid-column: 1;
+  overflow: hidden;
+  font-size: 11.5px;
+  color: var(--lx-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lx-badge {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  min-width: 36px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--lx-line-soft);
+  font-size: 11px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--lx-muted);
+}
+
+.lx-badge.tone-great {
+  background: var(--lx-forest);
+  color: #f2f5ef;
+}
+
+.lx-badge.tone-good {
+  background: #f5e2bd;
+  color: #7a5a1e;
+}
+
+.lx-badge.tone-try {
+  background: #fbe9e6;
+  color: var(--lx-red-deep);
+}
+
+.lx-tones {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0;
+  list-style: none;
+}
+
+.lx-tone {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 2px 10px;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--lx-line);
+  border-radius: 10px;
+  background: var(--lx-surface);
+  text-align: left;
+  color: var(--lx-forest);
+}
+
+.lx-tone:hover,
+.lx-tone.is-active {
+  border-color: var(--lx-forest);
+  background: var(--lx-sage-soft);
+}
+
+.lx-tone svg {
+  grid-row: span 2;
+}
+
+.lx-tone-mark {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--lx-ink);
+}
+
+.lx-tone-meaning {
+  grid-column: 2;
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--lx-muted);
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1020px) {
+  .lx-row-practice {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .lx-step-label {
+    display: none;
+  }
+
+  .lx-step {
+    justify-content: center;
+    padding: 8px 6px;
+  }
+
+  .lx-step.is-current .lx-step-label {
+    display: inline;
+  }
+
+  .lx-steps-list {
+    display: flex;
+    gap: 4px;
+  }
+
+  .lx-steps-list > li {
+    flex: 0 0 auto;
+  }
+
+  .lx-steps-list > li:has(.is-current) {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .lx-player-controls {
+    flex-wrap: wrap;
+  }
+
+  .lx-player-progress {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .lx-rate {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .lx-title-hanzi {
+    display: block;
+    margin: 4px 0 0;
+  }
+
+  .lx-stage,
+  .lx-review,
+  .lx-player,
+  .lx-quiz-card,
+  .lx-speak-card {
+    padding: 18px 16px;
+  }
+
+  .lx-stage-foot .lx-button {
+    padding: 10px 14px;
+  }
+
+  .lx-line {
+    max-width: 100%;
+  }
+
+  .lx-player-art {
+    width: 72px;
+    height: 72px;
+    font-size: 22px;
+  }
+
+  .lx-ruby {
+    font-size: 30px;
+  }
+
+  .lx-ruby rt {
+    font-size: 12px;
+  }
+
+  .lx-flash-hanzi {
+    font-size: 52px;
+  }
+
+  .lx-result {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lx-stage-body,
+  .lx-flash-back,
+  .lx-result {
+    animation: none;
+  }
+
+  .lx-mic.is-recording::before,
+  .lx-mic.is-recording::after {
+    animation: none;
+    opacity: 0.4;
+  }
+}

@@ -1,4 +1,5 @@
 import '../../styles/dashboard.css';
+import '../../styles/practice.css';
 
 import type { ReactNode } from 'react';
 
