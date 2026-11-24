@@ -38,10 +38,15 @@ export default function Sidebar() {
     <aside className={`lx-sidebar${isCollapsed ? ' is-collapsed' : ''}`} aria-label="Điều hướng chính">
       <div className="lx-sidebar-header">
         <Link href="/" className="lx-brand">
-          <span className="lx-brand-name">
-            lǎoshi<span className="lx-brand-dot">.</span>
-          </span>
-          <span className="lx-brand-tagline">Học mỗi ngày, tiến xa hơn</span>
+          <div className="lx-brand-logo-wrap">
+            <img src="/logo.png" alt="DoDo logo" className="lx-brand-logo" width={40} height={40} />
+          </div>
+          <div className="lx-brand-text">
+            <span className="lx-brand-name">
+              DoDo<span className="lx-brand-dot">.</span>
+            </span>
+            <span className="lx-brand-tagline">Học mỗi ngày, tiến xa hơn</span>
+          </div>
         </Link>
         <button
           type="button"

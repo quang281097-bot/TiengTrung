@@ -5,6 +5,7 @@ import { getSessionUser } from '../../../../lib/auth';
 import { getPool } from '../../../../lib/db';
 import { removeStoredReadingImage } from '../../../../lib/readingImages';
 import { parseImportantVocabulary } from '../../../../lib/readingVocabulary';
+import { syncReadingVocabulary } from '../../../../lib/readingVocabularyDb';
 
 export const runtime = 'nodejs';
 
@@ -63,19 +64,40 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   try {
     const parsed = parseReading(await request.json());
     if ('error' in parsed) return NextResponse.json({ error: parsed.error }, { status: 400 });
-    const course = await context.pool.query('SELECT id FROM khoa_hoc WHERE hsk_level = $1 ORDER BY position LIMIT 1', [parsed.hskLevel]);
-    if (!course.rows[0]) return NextResponse.json({ error: 'Chưa có khóa học HSK này.' }, { status: 404 });
+    const client = await context.pool.connect();
+    try {
+      await client.query('BEGIN');
+      const course = await client.query(
+        'SELECT id FROM khoa_hoc WHERE hsk_level = $1 ORDER BY position LIMIT 1',
+        [parsed.hskLevel],
+      );
+      if (!course.rows[0]) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ error: 'Chưa có khóa học HSK này.' }, { status: 404 });
+      }
 
-    const result = await context.pool.query(
-      `UPDATE bai_doc SET course_id = $1, slug = $2, title_vi = $3, title_zh = $4,
-         passage_zh = $5, pinyin = $6, translation_vi = $7, important_vocabulary = $8::jsonb,
-         est_minutes = $9, is_published = $10, updated_at = now()
-       WHERE id = $11 RETURNING id`,
-      [course.rows[0].id, parsed.slug, parsed.title, parsed.titleZh, parsed.passageZh,
-        parsed.pinyin, parsed.translationVi, JSON.stringify(parsed.importantVocabulary),
-        parsed.estMinutes, parsed.isPublished, id],
-    );
-    if (!result.rowCount) return NextResponse.json({ error: 'Không tìm thấy bài đọc.' }, { status: 404 });
+      const result = await client.query(
+        `UPDATE bai_doc SET course_id = $1, slug = $2, title_vi = $3, title_zh = $4,
+           passage_zh = $5, pinyin = $6, translation_vi = $7, important_vocabulary = $8::jsonb,
+           est_minutes = $9, is_published = $10, updated_at = now()
+         WHERE id = $11 RETURNING id`,
+        [course.rows[0].id, parsed.slug, parsed.title, parsed.titleZh, parsed.passageZh,
+          parsed.pinyin, parsed.translationVi, JSON.stringify(parsed.importantVocabulary),
+          parsed.estMinutes, parsed.isPublished, id],
+      );
+      if (!result.rowCount) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ error: 'Không tìm thấy bài đọc.' }, { status: 404 });
+      }
+      await syncReadingVocabulary(client, id, parsed.hskLevel, parsed.importantVocabulary);
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+
     revalidatePath('/practice');
     revalidatePath('/practice/manage');
     return NextResponse.json({ ok: true });

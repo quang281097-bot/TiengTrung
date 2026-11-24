@@ -1,6 +1,5 @@
-import FeaturePageLayout from '../../../components/dashboard/FeaturePageLayout';
-import { vocabPageData } from '../../../data/featureMenuData';
+import DictionaryBrowser from '../../../components/vocabulary/DictionaryBrowser';
 
 export default function VocabularyPage() {
-  return <FeaturePageLayout data={vocabPageData} />;
+  return <DictionaryBrowser />;
 }

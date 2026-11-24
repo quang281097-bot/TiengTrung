@@ -10,8 +10,13 @@ const beVietnamPro = Be_Vietnam_Pro({
 });
 
 export const metadata = {
-  title: { default: 'lǎoshi.', template: '%s · lǎoshi.' },
+  title: { default: 'DoDo.', template: '%s · DoDo.' },
   description: 'Nền tảng học tiếng Trung cho người Việt.',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({

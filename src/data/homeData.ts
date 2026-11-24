@@ -64,7 +64,7 @@ export const pageTitles: Record<string, string> = {
   '/practice/manage': 'Quản lý bài đọc',
   '/writing': 'Luyện viết',
   '/hsk': 'Thi HSK',
-  '/vocabulary': 'Từ vựng',
+  '/vocabulary': 'Từ điển',
   '/listening': 'Luyện nghe',
   '/speaking': 'Luyện nói',
   '/dialogues': 'Hội thoại',
@@ -77,6 +77,7 @@ export const examNav: NavLink[] = [{ id: 'exam', label: 'Thi HSK', href: '/hsk',
 
 export const skillNav: NavLink[] = [
   { id: 'review', label: 'Ôn tập', href: '/review', icon: 'layers' },
+  { id: 'dictionary', label: 'Từ điển', href: '/vocabulary', icon: 'book' },
   { id: 'listening', label: 'Luyện nghe', href: '/listening', icon: 'headphones' },
   { id: 'speaking', label: 'Luyện nói', href: '/speaking', icon: 'mic' },
   { id: 'reading', label: 'Luyện đọc', href: '/practice', icon: 'read' },
@@ -87,6 +88,7 @@ export const mobileNav: NavLink[] = [
   { id: 'home', label: 'Trang chủ', href: '/', icon: 'home' },
   { id: 'learn', label: 'Học ngay', href: '/learn', icon: 'play' },
   { id: 'review', label: 'Ôn tập', href: '/review', icon: 'layers' },
+  { id: 'dictionary', label: 'Từ điển', href: '/vocabulary', icon: 'book' },
   { id: 'listening', label: 'Nghe', href: '/listening', icon: 'headphones' },
   { id: 'speaking', label: 'Nói', href: '/speaking', icon: 'mic' },
 ];

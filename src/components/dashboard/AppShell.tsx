@@ -4,6 +4,8 @@ import '../../styles/dashboard.css';
 import '../../styles/practice.css';
 import '../../styles/reading.css';
 import '../../styles/writing.css';
+import '../../styles/review.css';
+import '../../styles/vocabulary.css';
 
 import type { ReactNode } from 'react';
 

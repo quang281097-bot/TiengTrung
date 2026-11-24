@@ -1,4 +1,5 @@
 import { getPool } from './db';
+import { readingVocabularyJsonSql } from './readingVocabularyDb';
 
 export type ReadingRecord = {
   id: number;
@@ -24,7 +25,7 @@ export async function getPublishedReadings(userId?: string): Promise<ReadingReco
     const result = await pool.query(
       `SELECT r.id, c.hsk_level AS "hskLevel", r.slug, r.title_vi AS title,
               r.title_zh AS "titleZh", r.passage_zh AS "passageZh", r.pinyin,
-              r.translation_vi AS "translationVi", r.important_vocabulary AS "importantVocabulary",
+              r.translation_vi AS "translationVi", ${readingVocabularyJsonSql} AS "importantVocabulary",
               r.image_url AS "imageUrl", r.est_minutes AS "estMinutes", r.is_published AS "isPublished",
               (p.completed_at IS NOT NULL) AS completed
        FROM bai_doc r

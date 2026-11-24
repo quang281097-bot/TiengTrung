@@ -43,7 +43,10 @@ export default function LoginPage() {
   return (
     <main className="auth-screen">
       <section className="auth-panel" aria-labelledby="login-title">
-        <Link href="/" className="auth-brand">lǎoshi.</Link>
+        <Link href="/" className="auth-brand">
+          <img src="/logo.png" alt="DoDo logo" className="auth-brand-logo" width={36} height={36} />
+          <span>DoDo.</span>
+        </Link>
         <p className="auth-kicker">KHÔNG GIAN HỌC TẬP</p>
         <h1 id="login-title">Chào mừng trở lại</h1>
         <p className="auth-copy">Đăng nhập để tiếp tục hành trình học tiếng Trung.</p>

@@ -17,10 +17,20 @@
 }
 
 .auth-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   color: #176f63;
   font-size: 1.65rem;
   font-weight: 700;
   text-decoration: none;
+}
+
+.auth-brand-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  object-fit: cover;
 }
 
 .auth-kicker {

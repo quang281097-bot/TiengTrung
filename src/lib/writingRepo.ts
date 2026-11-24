@@ -314,8 +314,12 @@ export async function getWritingPageData(): Promise<WritingPagePayload> {
     };
   }
 
+  for (const level of Object.keys(wordsByLevel)) {
+    wordsByLevel[Number(level)] = [];
+  }
+
   try {
-    const [charsRes, wordsRes, readingsRes] = await Promise.all([
+    const [charsRes, wordsRes] = await Promise.all([
       pool.query(
         `SELECT hanzi, pinyin, meaning_vi AS meaning, stroke_count AS "strokeCount", radical, hsk_level AS "hskLevel"
          FROM chu_han
@@ -323,19 +327,18 @@ export async function getWritingPageData(): Promise<WritingPagePayload> {
          LIMIT 500`,
       ),
       pool.query(
-        `SELECT id::text, hanzi, pinyin, meaning_vi AS meaning, hsk_level AS "hskLevel"
-         FROM tu_vung
-         ORDER BY hsk_level ASC, frequency_rank ASC NULLS LAST, id ASC
-         LIMIT 400`,
-      ),
-      pool.query(
-        `SELECT r.id, c.hsk_level AS "hskLevel", r.title_vi AS title, r.title_zh AS "titleZh",
-                r.important_vocabulary AS "importantVocabulary"
-         FROM bai_doc r
-         JOIN khoa_hoc c ON c.id = r.course_id
-         WHERE r.is_published = true
-         ORDER BY c.hsk_level ASC, r.id ASC
-         LIMIT 36`,
+        `SELECT w.id::text, w.hanzi, w.pinyin,
+                COALESCE((
+                  SELECT sense.meaning_vi
+                  FROM tu_vung_nghia sense
+                  WHERE sense.word_id = w.id
+                  ORDER BY sense.position, sense.id
+                  LIMIT 1
+                ), '') AS meaning,
+                w.hsk_level AS "hskLevel"
+         FROM tu_vung w
+         ORDER BY w.hsk_level ASC NULLS LAST, w.id ASC
+        `,
       ),
     ]);
 
@@ -352,27 +355,18 @@ export async function getWritingPageData(): Promise<WritingPagePayload> {
       }
     }
 
-    const seenWords = new Set<string>();
-    for (const lv of [1, 2, 3, 4, 5, 6]) {
-      for (const w of wordsByLevel[lv]) {
-        seenWords.add(`${lv}:${w.hanzi}`);
-      }
-    }
-
     for (const row of wordsRes.rows) {
-      const lv = Number(row.hskLevel) || 1;
+      const lv = Number(row.hskLevel);
+      if (!Number.isInteger(lv) || lv < 1 || lv > 7) continue;
       if (!wordsByLevel[lv]) wordsByLevel[lv] = [];
-      const key = `${lv}:${row.hanzi}`;
-      if (!seenWords.has(key)) {
-        seenWords.add(key);
-        wordsByLevel[lv].push({
-          id: `db-w-${row.id}`,
-          hanzi: row.hanzi,
-          pinyin: row.pinyin,
-          meaning: row.meaning,
-          hskLevel: lv,
-        });
-      }
+      const word: WritingWordItem = {
+        id: `db-w-${row.id}`,
+        hanzi: row.hanzi,
+        pinyin: row.pinyin,
+        meaning: row.meaning,
+        hskLevel: lv,
+      };
+      wordsByLevel[lv].push(word);
       const splitChars = splitWordToChars(row.hanzi, row.pinyin, row.meaning, charDictionary);
       for (const item of splitChars) {
         if (!charDictionary[item.char]) {
@@ -380,54 +374,9 @@ export async function getWritingPageData(): Promise<WritingPagePayload> {
         }
       }
     }
-
-    for (const reading of readingsRes.rows) {
-      const lv = Number(reading.hskLevel) || 1;
-      const vocabList: { hanzi: string; pinyin: string; meaningVi: string }[] = Array.isArray(
-        reading.importantVocabulary,
-      )
-        ? reading.importantVocabulary
-        : [];
-
-      const deckWords: WritingWordItem[] = [];
-      vocabList.forEach((v, idx) => {
-        if (!v?.hanzi) return;
-        const wordItem: WritingWordItem = {
-          id: `rd-${reading.id}-${idx}`,
-          hanzi: v.hanzi,
-          pinyin: v.pinyin || '',
-          meaning: v.meaningVi || '',
-          hskLevel: lv,
-        };
-        deckWords.push(wordItem);
-
-        const key = `${lv}:${v.hanzi}`;
-        if (!seenWords.has(key)) {
-          seenWords.add(key);
-          if (!wordsByLevel[lv]) wordsByLevel[lv] = [];
-          wordsByLevel[lv].push(wordItem);
-        }
-
-        const splitChars = splitWordToChars(v.hanzi, v.pinyin || '', v.meaningVi || '', charDictionary);
-        for (const item of splitChars) {
-          if (!charDictionary[item.char]) {
-            charDictionary[item.char] = { ...item, hskLevel: lv };
-          }
-        }
-      });
-
-      if (deckWords.length > 0 && decks.length < 18) {
-        decks.push({
-          id: `reading-deck-${reading.id}`,
-          title: `HSK ${lv} · ${reading.title}`,
-          subtitle: `${reading.titleZh ? `${reading.titleZh} · ` : ''}${deckWords.length} từ vựng trọng tâm`,
-          hskLevel: lv,
-          words: deckWords,
-        });
-      }
-    }
   } catch (error) {
-    console.error('[writingRepo] Không thể tải dữ liệu từ PostgreSQL, dùng dữ liệu mặc định:', error);
+    console.error('[writingRepo] Không thể tải dữ liệu luyện viết từ PostgreSQL:', error);
+    throw error;
   }
 
   return {

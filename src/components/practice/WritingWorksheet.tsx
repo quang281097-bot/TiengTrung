@@ -104,7 +104,7 @@ const GRID_COLORS: Record<
     badgeBg: '#f0f9ff',
   },
   forest: {
-    name: 'Xanh tùng lǎoshi.',
+    name: 'Xanh tùng DoDo.',
     border: '#1f4334',
     dashed: '#86b39d',
     dot: '#1f4334',
@@ -676,6 +676,7 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
   const [pickerTab, setPickerTab] = useState<PickerTab>('hsk');
   const [selectedHsk, setSelectedHsk] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [hskVisibleCount, setHskVisibleCount] = useState(100);
   const [selectedDeckId, setSelectedDeckId] = useState<string>(data.decks[0]?.id ?? '');
   const [customText, setCustomText] = useState<string>('');
 
@@ -756,6 +757,7 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
         w.meaning.toLowerCase().includes(q),
     );
   }, [data.wordsByLevel, selectedHsk, searchQuery]);
+  const visibleHskWords = filteredHskWords.slice(0, hskVisibleCount);
 
   const activeDeck = useMemo(
     () => data.decks.find((d) => d.id === selectedDeckId) ?? data.decks[0] ?? null,
@@ -930,7 +932,7 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
                 className={`ws-picker-tab${pickerTab === 'hsk' ? ' is-active' : ''}`}
                 onClick={() => setPickerTab('hsk')}
               >
-                HSK 1 - 6
+                HSK 1 - 9
               </button>
               <button
                 type="button"
@@ -952,18 +954,21 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
               </button>
             </div>
 
-            {/* Nội dung Tab 1: HSK 1 - 6 */}
+            {/* Nội dung Tab 1: Từ điển HSK */}
             {pickerTab === 'hsk' && (
               <div className="ws-picker-panel">
                 <div className="ws-hsk-pills">
-                  {[1, 2, 3, 4, 5, 6].map((lv) => (
+                  {[1, 2, 3, 4, 5, 6, 7].map((lv) => (
                     <button
                       key={lv}
                       type="button"
                       className={`ws-hsk-pill${selectedHsk === lv ? ' is-active' : ''}`}
-                      onClick={() => setSelectedHsk(lv)}
+                      onClick={() => {
+                        setSelectedHsk(lv);
+                        setHskVisibleCount(100);
+                      }}
                     >
-                      HSK {lv}
+                      {lv === 7 ? 'HSK 7–9' : `HSK ${lv}`}
                     </button>
                   ))}
                 </div>
@@ -972,7 +977,10 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
                   <input
                     type="text"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => {
+                      setSearchQuery(e.target.value);
+                      setHskVisibleCount(100);
+                    }}
                     placeholder="Tìm chữ Hán, pinyin hoặc nghĩa tiếng Việt..."
                     className="ws-search-input"
                   />
@@ -980,7 +988,10 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
                     <button
                       type="button"
                       className="ws-search-clear"
-                      onClick={() => setSearchQuery('')}
+                      onClick={() => {
+                        setSearchQuery('');
+                        setHskVisibleCount(100);
+                      }}
                       aria-label="Xóa tìm kiếm"
                     >
                       ×
@@ -989,7 +1000,7 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
                 </div>
 
                 <div className="ws-word-grid">
-                  {filteredHskWords.map((word) => {
+                  {visibleHskWords.map((word) => {
                     const charsInWord = Array.from(word.hanzi).filter((ch) =>
                       /[\u3400-\u9fff\uF900-\uFAFF]/.test(ch),
                     );
@@ -1019,6 +1030,15 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
                     <div className="ws-empty-words">Không tìm thấy từ vựng phù hợp.</div>
                   )}
                 </div>
+                {visibleHskWords.length < filteredHskWords.length && (
+                  <button
+                    type="button"
+                    className="ws-btn-add-all"
+                    onClick={() => setHskVisibleCount((count) => count + 100)}
+                  >
+                    Hiển thị thêm ({filteredHskWords.length - visibleHskWords.length} từ còn lại)
+                  </button>
+                )}
               </div>
             )}
 
@@ -1374,7 +1394,7 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
                           {sheetTitle || 'Luyện viết chữ Hán theo thứ tự nét'}
                         </h3>
                         <p className="ws-sheet-brand">
-                          lǎoshi. · Phiếu tập viết chữ Hán tiêu chuẩn ({GRID_TYPES.find((g) => g.id === gridType)?.label}{' '}
+                          DoDo. · Phiếu tập viết chữ Hán tiêu chuẩn ({GRID_TYPES.find((g) => g.id === gridType)?.label}{' '}
                           {GRID_TYPES.find((g) => g.id === gridType)?.zh})
                         </p>
                       </div>
@@ -1412,7 +1432,7 @@ export default function WritingWorksheet({ data }: { data: WritingPagePayload })
 
                     {/* Chân trang giấy A4 */}
                     <footer className="ws-sheet-footer">
-                      <span>lǎoshi. · Học mỗi ngày, tiến xa hơn</span>
+                      <span>DoDo. · Học mỗi ngày, tiến xa hơn</span>
                       <span>
                         Trang {pageIdx + 1} / {pages.length}
                       </span>

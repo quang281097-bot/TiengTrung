@@ -4,6 +4,7 @@ import { NextResponse } from 'next/server';
 import { getSessionUser } from '../../../lib/auth';
 import { getPool } from '../../../lib/db';
 import { parseImportantVocabulary } from '../../../lib/readingVocabulary';
+import { readingVocabularyJsonSql, syncReadingVocabulary } from '../../../lib/readingVocabularyDb';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -62,7 +63,7 @@ export async function GET(request: Request) {
       `SELECT r.id, c.hsk_level AS "hskLevel", r.slug, r.title_vi AS title,
               r.title_zh AS "titleZh", r.passage_zh AS "passageZh", r.pinyin,
               r.translation_vi AS "translationVi", r.est_minutes AS "estMinutes",
-              r.important_vocabulary AS "importantVocabulary", r.image_url AS "imageUrl",
+              ${readingVocabularyJsonSql} AS "importantVocabulary", r.image_url AS "imageUrl",
               r.is_published AS "isPublished"
        FROM bai_doc r
        JOIN khoa_hoc c ON c.id = r.course_id
@@ -90,21 +91,41 @@ export async function POST(request: Request) {
     const parsed = parseReading(await request.json());
     if ('error' in parsed) return NextResponse.json({ error: parsed.error }, { status: 400 });
 
-    const course = await pool.query('SELECT id FROM khoa_hoc WHERE hsk_level = $1 ORDER BY position LIMIT 1', [parsed.hskLevel]);
-    if (!course.rows[0]) return NextResponse.json({ error: 'Chưa có khóa học HSK này.' }, { status: 404 });
+    const client = await pool.connect();
+    let readingId: number;
+    try {
+      await client.query('BEGIN');
+      const course = await client.query(
+        'SELECT id FROM khoa_hoc WHERE hsk_level = $1 ORDER BY position LIMIT 1',
+        [parsed.hskLevel],
+      );
+      if (!course.rows[0]) {
+        await client.query('ROLLBACK');
+        return NextResponse.json({ error: 'Chưa có khóa học HSK này.' }, { status: 404 });
+      }
 
-    const result = await pool.query(
-      `INSERT INTO bai_doc
-         (course_id, slug, title_vi, title_zh, passage_zh, pinyin, translation_vi, important_vocabulary, est_minutes, is_published, created_by)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11)
-       RETURNING id`,
-      [course.rows[0].id, parsed.slug, parsed.title, parsed.titleZh, parsed.passageZh,
-        parsed.pinyin, parsed.translationVi, JSON.stringify(parsed.importantVocabulary),
-        parsed.estMinutes, parsed.isPublished, user.id],
-    );
+      const result = await client.query(
+        `INSERT INTO bai_doc
+           (course_id, slug, title_vi, title_zh, passage_zh, pinyin, translation_vi, important_vocabulary, est_minutes, is_published, created_by)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9, $10, $11)
+         RETURNING id`,
+        [course.rows[0].id, parsed.slug, parsed.title, parsed.titleZh, parsed.passageZh,
+          parsed.pinyin, parsed.translationVi, JSON.stringify(parsed.importantVocabulary),
+          parsed.estMinutes, parsed.isPublished, user.id],
+      );
+      readingId = result.rows[0].id;
+      await syncReadingVocabulary(client, readingId, parsed.hskLevel, parsed.importantVocabulary);
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
+
     revalidatePath('/practice');
     revalidatePath('/practice/manage');
-    return NextResponse.json({ id: result.rows[0].id }, { status: 201 });
+    return NextResponse.json({ id: readingId }, { status: 201 });
   } catch {
     return NextResponse.json({ error: 'Không thể tạo bài đọc. Kiểm tra slug có bị trùng không.' }, { status: 500 });
   }

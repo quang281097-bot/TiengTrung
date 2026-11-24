@@ -71,7 +71,8 @@ export default function TopHeader() {
         </button>
 
         <Link href="/" className={`lx-topbar-brand${isCollapsed ? ' is-visible' : ''}`}>
-          lǎoshi<span>.</span>
+          <img src="/logo.png" alt="DoDo logo" className="lx-topbar-logo" width={26} height={26} />
+          <span>DoDo<span className="lx-brand-dot">.</span></span>
         </Link>
 
         <span className="lx-topbar-divider" aria-hidden="true" />

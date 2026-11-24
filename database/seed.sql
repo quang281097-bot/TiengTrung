@@ -142,7 +142,8 @@ INSERT INTO cau_tieng_trung (hanzi, pinyin, syllables, meaning_vi, hsk_level) VA
   ('你好，我叫 Quang。', 'Nǐ hǎo, wǒ jiào Quang.', NULL, 'Xin chào, tôi tên là Quang.', 1);
 
 -- ---------------------------------------------------------------- Từ vựng
-INSERT INTO tu_vung (hanzi, pinyin, meaning_vi, part_of_speech, hsk_level) VALUES
+WITH vocabulary (hanzi, pinyin, meaning_vi, part_of_speech, hsk_level) AS (
+  VALUES
   -- bài 09
   ('起床', 'qǐchuáng', 'thức dậy',          'động từ',   2),
   ('早上', 'zǎoshang', 'buổi sáng',         'danh từ',   2),
@@ -166,7 +167,20 @@ INSERT INTO tu_vung (hanzi, pinyin, meaning_vi, part_of_speech, hsk_level) VALUE
   ('便宜', 'piányi',    'rẻ',                 'tính từ',  2),
   ('已经', 'yǐjīng',    'đã (rồi)',           'phó từ',   2),
   ('休息', 'xiūxi',     'nghỉ ngơi',          'động từ',  2),
-  ('运动', 'yùndòng',   'vận động, thể thao', 'động từ',  2);
+  ('运动', 'yùndòng',   'vận động, thể thao', 'động từ',  2)
+), upserted_words AS (
+  INSERT INTO tu_vung (hanzi, pinyin, hsk_level)
+  SELECT hanzi, pinyin, hsk_level FROM vocabulary
+  ON CONFLICT (hanzi, pinyin) DO UPDATE
+    SET hsk_level = EXCLUDED.hsk_level
+  RETURNING id, hanzi, pinyin
+)
+INSERT INTO tu_vung_nghia (word_id, meaning_vi, part_of_speech, position)
+SELECT word.id, vocabulary.meaning_vi, vocabulary.part_of_speech, 1
+FROM vocabulary
+JOIN upserted_words word USING (hanzi, pinyin)
+ON CONFLICT (word_id, meaning_vi) DO UPDATE
+  SET part_of_speech = EXCLUDED.part_of_speech;
 
 INSERT INTO vi_du_tu_vung (word_id, sentence_id, position)
 SELECT w.id, s.id, 1

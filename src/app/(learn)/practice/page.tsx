@@ -7,7 +7,7 @@ import { getSessionUser } from '../../../lib/auth';
 import { getPublishedReadings } from '../../../lib/readingRepository';
 
 export const metadata = {
-  title: 'Luyện đọc tiếng Trung theo cấp độ HSK | lǎoshi.',
+  title: 'Luyện đọc tiếng Trung theo cấp độ HSK | DoDo.',
   description: 'Luyện đọc đoạn văn và hội thoại tiếng Trung từ cấp độ HSK 1 đến HSK 6 kèm phiên âm Pinyin, bản dịch và phát âm chuẩn.',
 };
 

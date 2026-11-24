@@ -7,6 +7,7 @@ Database cho app học tiếng Trung (Next.js), thiết kế theo đúng các m�
 | [schema.sql](schema.sql) | Tạo toàn bộ bảng, index, ràng buộc và hàm tiện ích. **Đây là nguồn chuẩn**: nếu tài liệu này lệch với schema, schema đúng. |
 | [seed.sql](seed.sql) | Dữ liệu mẫu chuyển từ `src/data/*.ts` và một người học mẫu (Minh Anh). |
 | [queries.sql](queries.sql) | Truy vấn cho từng khối trên UI, viết sẵn tham số `$1, $2` để dùng với `pg`. |
+| [2026-11-24-normalize-vocabulary.sql](migrations/2026-11-24-normalize-vocabulary.sql) | Chuẩn hóa nghĩa từ, nhập từ bài đọc vào từ điển và phân cấp HSK. |
 
 **Hệ quản trị:** PostgreSQL 14 trở lên, cần extension `pg_trgm` (Supabase, Neon, Vercel Postgres đều có sẵn).
 
@@ -16,7 +17,7 @@ Database cho app học tiếng Trung (Next.js), thiết kế theo đúng các m�
 
 ## 1. Tổng quan
 
-36 bảng, chia 5 nhóm:
+38 bảng, chia 5 nhóm:
 
 | Nhóm | Tên bảng trong PostgreSQL | Chức năng |
 |---|---|---|
@@ -28,10 +29,12 @@ Database cho app học tiếng Trung (Next.js), thiết kế theo đúng các m�
 | Nội dung học | `khoa_hoc` | Các khóa học HSK |
 | Nội dung học | `chu_de` | Chủ đề học tập |
 | Nội dung học | `bai_hoc` | Bài học và các bước học |
-| Nội dung học | `bai_doc` | Bài đọc theo HSK, bản dịch, pinyin, mảng `important_vocabulary` và ảnh minh họa tùy chọn |
+| Nội dung học | `bai_doc` | Bài đọc theo HSK, bản dịch, pinyin, JSONB từ vựng tương thích và ảnh tùy chọn |
 | Nội dung học | `cau_tieng_trung` | Câu tiếng Trung, pinyin, âm thanh và nghĩa |
 | Nội dung học | `tu_vung` | Từ vựng và thông tin tra cứu |
+| Nội dung học | `tu_vung_nghia` | Các nghĩa và từ loại của một từ |
 | Nội dung học | `vi_du_tu_vung` | Liên kết từ vựng với câu ví dụ |
+| Nội dung học | `bai_doc_tu_vung` | Liên kết từ điển với từ trọng tâm của bài đọc |
 | Nội dung học | `mau_ngu_phap` | Mẫu ngữ pháp trong bài học |
 | Nội dung học | `nguoi_noi` | Nhân vật/người nói trong hội thoại |
 | Nội dung học | `hoi_thoai` | Nội dung bài hội thoại và bài nghe |
@@ -75,6 +78,9 @@ erDiagram
   bo_bai_luyen_noi  ||--o{ muc_luyen_noi   : "gồm"
   bo_tu_vung          ||--o{ tu_trong_bo_tu_vung       : "chứa"
   tu_vung          ||--o{ tu_trong_bo_tu_vung       : "nằm trong"
+  tu_vung          ||--o{ tu_vung_nghia : "có nghĩa"
+  tu_vung          ||--o{ bai_doc_tu_vung : "xuất hiện trong bài đọc"
+  tu_vung_nghia    |o--o{ bai_doc_tu_vung : "nghĩa dùng trong ngữ cảnh"
   tu_vung          ||--o{ vi_du_tu_vung    : "có ví dụ"
   cau_tieng_trung      ||--o{ vi_du_tu_vung    : ""
   cau_tieng_trung      ||--o{ mau_ngu_phap : "ví dụ"
@@ -216,9 +222,18 @@ Quy ước: **PK** khoá chính, **FK** khoá ngoại, **UQ** duy nhất. Không
 | `hanzi`, `traditional` | giản thể / phồn thể |
 | `pinyin` | `qǐchuáng`. UQ cùng `hanzi` vì 了 le / liǎo là hai mục |
 | `pinyin_search` | **cột sinh tự động**, bỏ dấu: `qichuang`, `lǚyóu` → `lvyou` |
-| `meaning_vi`, `part_of_speech`, `hsk_level`, `audio_url` | |
+| `hsk_level` | Cấp HSK thấp nhất được gán cho mục từ, từ 1 đến 9; không có giá trị nghĩa là chưa phân loại |
+| `audio_url` | |
 
-Index trigram trên `pinyin_search` và `meaning_vi` cho ô tìm kiếm.
+`tu_vung` là mục từ chuẩn; nghĩa không lưu trực tiếp tại đây để tránh giới hạn một nghĩa cho mỗi từ.
+
+#### `tu_vung_nghia`: nghĩa và từ loại
+`word_id`, `meaning_vi`, `part_of_speech`, `position`. Một từ có thể có nhiều nghĩa; chỉnh nghĩa chung tại đây để các màn dùng chung được cập nhật.
+
+Index trigram trên `pinyin_search` và `tu_vung_nghia.meaning_vi` cho ô tìm kiếm.
+
+#### `bai_doc_tu_vung`: từ trong bài đọc
+PK (`reading_id`, `word_id`), `sense_id` trỏ đến nghĩa từ điển đang dùng, `position` giữ thứ tự hiển thị. `contextual_meaning_vi` và `note_vi` chỉ dành cho trường hợp cần cách diễn giải riêng trong ngữ cảnh bài đọc.
 
 #### Bảng nối nội dung
 - **`vi_du_tu_vung`** (`word_id`, `sentence_id`) PK, `position`: câu ví dụ trên thẻ ôn tập.
@@ -357,7 +372,7 @@ Một bảng này cung cấp: thời gian hôm nay, tổng giờ học, biểu �
 | Luyện nói | `bo_bai_luyen_noi`, `muc_luyen_noi`, `lan_luyen_noi` | `speaking_set`, `speaking_stats` |
 | Viết chữ | `chu_han`, `lan_luyen_viet` | |
 | Thành tích | `thanh_tuu`, `thanh_tuu_nguoi_dung` | |
-| Tìm kiếm từ | `tu_vung` | `search_words` (chữ Hán, pinyin có/không dấu, nghĩa) |
+| Tra từ điển | `tu_vung`, `tu_vung_nghia` | `/api/vocabulary` (chữ Hán, pinyin, nghĩa, lọc HSK) |
 
 ---
 
@@ -394,7 +409,9 @@ $env:PGCLIENTENCODING = 'UTF8'
 
 **Database đã có schema trước khi thêm Luyện đọc:** chạy lần lượt `migrations/2026-11-24-add-reading.sql`, `migrations/2026-11-24-add-reading-samples.sql`, `migrations/2026-11-24-fix-reading-sample-count.sql`, `migrations/2026-11-24-add-reading-vocabulary.sql` và `migrations/2026-11-24-add-reading-image.sql` một lần. Kết quả có 10 bài đọc cho mỗi cấp HSK 1–6 (60 bài tổng cộng), mỗi bài có từ vựng trọng tâm và có thể gắn ảnh.
 
-**Database mới:** sau `schema.sql` và `seed.sql`, chạy `migrations/2026-11-24-add-reading-samples.sql`, `migrations/2026-11-24-add-reading-vocabulary.sql`, `migrations/2026-11-24-add-reading-image.sql` và `migrations/2026-11-24-add-reading-progress.sql` để nạp bài đọc, từ vựng, ảnh và tiến độ hoàn thành theo tài khoản.
+**Database mới:** sau `schema.sql` và `seed.sql`, chạy `migrations/2026-11-24-add-reading-samples.sql`, `migrations/2026-11-24-add-reading-vocabulary.sql`, `migrations/2026-11-24-add-reading-image.sql`, `migrations/2026-11-24-add-reading-progress.sql` và cuối cùng `migrations/2026-11-24-normalize-vocabulary.sql` để nạp nội dung và liên kết từ bài đọc với từ điển.
+
+**Chuẩn hóa database đang có:** sau các migration Luyện đọc ở trên, chạy `migrations/2026-11-24-normalize-vocabulary.sql` một lần. Migration chuyển nghĩa và từ loại hiện tại sang `tu_vung_nghia`, nhập từ trong `important_vocabulary` vào `tu_vung`, tạo liên kết `bai_doc_tu_vung`, gán cấp HSK thấp nhất mà từ xuất hiện trong bài đọc và bỏ các cột nghĩa cũ khỏi `tu_vung`. Từ điển mẫu giữ nguyên cấp HSK đã có; cấp được suy ra từ bài đọc nên cần rà soát trước khi coi là cấp HSK chính thức. Cột JSONB `bai_doc.important_vocabulary` được giữ làm dữ liệu tương thích và được API đồng bộ; sau migration, màn hình đọc lấy từ chuẩn qua `bai_doc_tu_vung`.
 
 Ảnh do admin tải lên được lưu trong `public/uploads/readings/` (JPEG, PNG hoặc WebP, tối đa 5 MB); thư mục này được Git bỏ qua. Khi triển khai lên dịch vụ có filesystem tạm thời, cần chuyển phần lưu ảnh sang object storage.
 
@@ -437,7 +454,6 @@ Cũng đã kiểm tra `award_xp` gọi hai lần với cùng `ref_key` chỉ c�
 |---|---|
 | Luyện đọc (`/practice`) | `bai_doc`, lọc theo `khoa_hoc.hsk_level`; sửa/xóa qua API chỉ dành cho admin |
 | Đăng nhập Google/Facebook | Dùng Auth.js với adapter Postgres, bỏ bảng `phien_dang_nhap` tự viết |
-| Một từ nhiều nghĩa | Tách `meaning_vi` ra bảng `word_senses` (`word_id`, `position`, `meaning_vi`, `part_of_speech`) |
 | Tìm nghĩa tiếng Việt không dấu ("thuc day") | Thêm extension `unaccent` và một cột sinh `meaning_search` |
 | Đổi thuật toán ôn sang FSRS | Chỉ đổi cột trong `the_on_tap`; `lich_su_on_tap` đã đủ dữ liệu để huấn luyện |
 | Nhiều người dùng (hàng trăm nghìn trở lên) | Partition `lich_su_on_tap` và `hoat_dong_hang_ngay` theo tháng |

@@ -85,22 +85,60 @@ body:has(.lx-shell) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 64px;
+  min-height: 68px;
   margin: 0 -16px 20px;
-  padding: 0 18px;
+  padding: 0 16px;
   border-bottom: 1px solid rgba(189, 209, 177, 0.14);
   background: rgba(12, 28, 20, 0.28);
   color: #f4f7f1;
 }
 
 .lx-sidebar-header .lx-brand {
-  gap: 3px;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px;
   padding: 0;
-  margin-bottom: 0;
+  margin: 0 !important;
+  text-decoration: none;
+  min-width: 0;
+  flex: 1;
+}
+
+.lx-brand-logo-wrap {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+  padding: 2px;
+}
+
+.lx-brand-logo {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  object-fit: contain;
+  display: block;
+}
+
+.lx-brand-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
 }
 
 .lx-sidebar-header .lx-brand-name {
-  font-size: 22px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
   color: #ffffff;
 }
 
@@ -110,7 +148,15 @@ body:has(.lx-shell) {
 
 .lx-sidebar-header .lx-brand-tagline {
   font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  margin-top: 2px;
   color: rgba(214, 228, 206, 0.72);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .lx-sidebar-close-btn {
@@ -153,8 +199,8 @@ body:has(.lx-shell) {
 
 .lx-brand {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 10px;
   padding: 0 10px;
   margin-bottom: 34px;
 }
@@ -371,15 +417,33 @@ body:has(.lx-shell) {
 
 .lx-topbar-brand {
   display: none;
-  align-items: baseline;
-  font-size: 20px;
+  align-items: center;
+  gap: 8px;
+  font-size: 19px;
   font-weight: 700;
   letter-spacing: -0.03em;
   color: #ffffff;
   white-space: nowrap;
+  text-decoration: none;
+}
+
+.lx-topbar-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 1.5px;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 .lx-topbar-brand span {
+  display: inline-flex;
+  align-items: baseline;
+}
+
+.lx-topbar-brand .lx-brand-dot {
   color: #ef6f5e;
 }
 
@@ -1411,7 +1475,7 @@ body:has(.lx-shell) {
     inset: auto 0 0;
     z-index: 20;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
     border-top: 1px solid var(--lx-line);
     background: var(--lx-surface);

@@ -123,7 +123,9 @@ ORDER BY d.id;
 
 -- name: review_queue
 -- Thẻ cần ôn ngay, kèm câu ví dụ đầu tiên.
-SELECT w.id AS word_id, w.hanzi, w.pinyin, w.meaning_vi, w.hsk_level, c.state,
+SELECT w.id AS word_id, w.hanzi, w.pinyin,
+       (SELECT meaning_vi FROM tu_vung_nghia s WHERE s.word_id = w.id ORDER BY s.position, s.id LIMIT 1) AS meaning_vi,
+       w.hsk_level, c.state,
        ex.hanzi AS example_hanzi, ex.pinyin AS example_pinyin, ex.meaning_vi AS example_meaning
 FROM the_on_tap c
 JOIN tu_vung w ON w.id = c.word_id
@@ -229,7 +231,14 @@ WHERE user_id = $1;
 -- Toàn bộ nội dung một bài học cho LessonPlayer, trong một lần gọi ($1 = slug bài).
 SELECT l.slug, l.number, l.title, l.title_zh, l.description, l.goals, l.steps, l.notes,
        l.cover_hanzi, l.cover_caption,
-       (SELECT jsonb_agg(jsonb_build_object('hanzi', w.hanzi, 'pinyin', w.pinyin, 'meaning', w.meaning_vi)
+       (SELECT jsonb_agg(jsonb_build_object(
+                            'hanzi', w.hanzi,
+                            'pinyin', w.pinyin,
+                            'meaning', (SELECT meaning_vi
+                                        FROM tu_vung_nghia s
+                                        WHERE s.word_id = w.id
+                                        ORDER BY s.position, s.id
+                                        LIMIT 1))
                          ORDER BY dw.position)
           FROM bo_tu_vung d JOIN tu_trong_bo_tu_vung dw ON dw.deck_id = d.id JOIN tu_vung w ON w.id = dw.word_id
          WHERE d.lesson_id = l.id) AS vocabulary,
@@ -257,12 +266,24 @@ WHERE l.slug = $1;
 
 -- name: search_words
 -- Ô tìm kiếm: gõ chữ Hán, pinyin có/không dấu, hoặc nghĩa tiếng Việt ($1 = từ khoá).
-SELECT id, hanzi, pinyin, meaning_vi, hsk_level
-FROM tu_vung
-WHERE hanzi LIKE '%' || $1 || '%'
-   OR pinyin_search LIKE '%' || pinyin_plain($1) || '%'
-   OR meaning_vi ILIKE '%' || $1 || '%'
-ORDER BY (hanzi = $1) DESC, (pinyin_search = pinyin_plain($1)) DESC, hsk_level, hanzi
+SELECT w.id, w.hanzi, w.pinyin, sense.meaning_vi, w.hsk_level
+FROM tu_vung w
+LEFT JOIN LATERAL (
+  SELECT meaning_vi
+  FROM tu_vung_nghia
+  WHERE word_id = w.id
+  ORDER BY position, id
+  LIMIT 1
+) sense ON true
+WHERE w.hanzi LIKE '%' || $1 || '%'
+   OR w.pinyin_search LIKE '%' || pinyin_plain($1) || '%'
+   OR EXISTS (
+     SELECT 1
+     FROM tu_vung_nghia matched
+     WHERE matched.word_id = w.id
+       AND matched.meaning_vi ILIKE '%' || $1 || '%'
+   )
+ORDER BY (w.hanzi = $1) DESC, (w.pinyin_search = pinyin_plain($1)) DESC, w.hsk_level, w.hanzi
 LIMIT 20;
 
 

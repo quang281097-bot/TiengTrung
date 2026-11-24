@@ -1,0 +1,2098 @@
+/* ==========================================================================
+   MÀN ÔN TẬP & SỔ TAY TỪ VỰNG TOÀN DIỆN (review.css)
+   Thiết kế theo Hanzii Notebook Detail + 4 Chế độ: Ôn tập, Phát âm, Luyện viết, Flashcard
+   ========================================================================== */
+
+.rv-hub {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 48px;
+  font-family: var(--font-be-vietnam), 'Be Vietnam Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+}
+
+/* --- Kệ chọn Sổ tay HSK 1 -> HSK 7-9 --- */
+.rv-notebook-shelf {
+  background: #ffffff;
+  border: 1px solid #e3eae5;
+  border-radius: 16px;
+  padding: 18px 22px;
+  box-shadow: 0 2px 10px rgba(22, 49, 36, 0.04);
+}
+
+.rv-shelf-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.rv-shelf-eyebrow {
+  display: block;
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #295743;
+}
+
+.rv-shelf-title {
+  margin: 2px 0 0;
+  font-size: 1.38rem;
+  font-weight: 700;
+  color: #15221a;
+}
+
+.rv-shelf-global-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rv-global-stat {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f4f7f5;
+  border: 1px solid #dce5df;
+  font-size: 0.82rem;
+  color: #36473d;
+}
+
+.rv-global-stat.is-emerald {
+  background: #eef6f1;
+  border-color: #c3dccd;
+  color: #1b4332;
+}
+
+.rv-deck-tabs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 10px;
+}
+
+.rv-deck-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  border: 1.5px solid #e3eae5;
+  background: #fafcfb;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.16s ease;
+}
+
+.rv-deck-tab:hover {
+  border-color: #9ab9a7;
+  background: #f3f8f5;
+}
+
+.rv-deck-tab.is-active {
+  border-color: #1f4334;
+  background: #eef5f0;
+  box-shadow: 0 3px 10px rgba(31, 67, 52, 0.1);
+}
+
+.rv-deck-tab-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.rv-deck-badge {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #1f4334;
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.rv-deck-count {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #5c6b61;
+}
+
+.rv-deck-name {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #16221b;
+}
+
+.rv-deck-mini-bar {
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: #dce5df;
+  overflow: hidden;
+}
+
+.rv-deck-mini-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #1f4334, #2d9b70);
+  border-radius: 999px;
+}
+
+/* --- Hero Card Sổ tay & 5 Nút Chế độ Ôn tập --- */
+.rv-hero-card {
+  background: linear-gradient(120deg, #173325 0%, #214836 55%, #285742 100%);
+  color: #ffffff;
+  border-radius: 18px;
+  padding: 22px 24px;
+  box-shadow: 0 10px 26px rgba(22, 49, 36, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.rv-hero-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.rv-hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rv-hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.rv-badge-hsk {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #fef08a;
+  color: #163124;
+  font-size: 0.76rem;
+  font-weight: 800;
+}
+
+.rv-badge-count,
+.rv-badge-progress {
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #eef5f0;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.rv-hero-title {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.rv-hero-subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #cfe3d6;
+}
+
+.rv-batch-selector-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.rv-batch-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #e2f0e7;
+}
+
+.rv-batch-select {
+  padding: 6px 12px;
+  border-radius: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(15, 34, 24, 0.55);
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+}
+
+.rv-batch-select option {
+  background: #173325;
+  color: #ffffff;
+}
+
+.rv-pagination-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e6eee9;
+}
+
+.rv-pagination-info {
+  font-size: 0.86rem;
+  color: #46584d;
+}
+
+.rv-stat-pills {
+  display: flex;
+  gap: 10px;
+}
+
+.rv-stat-pill {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  min-width: 88px;
+}
+
+.rv-stat-pill span {
+  font-size: 0.74rem;
+  color: #cfe3d6;
+}
+
+.rv-stat-pill strong {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.rv-stat-pill.is-memorized strong {
+  color: #86efac;
+}
+
+.rv-stat-pill.is-learning strong {
+  color: #fde047;
+}
+
+/* Lưới 5 nút chế độ (Sổ tay + Ôn tập + Phát âm + Luyện viết + Flashcard) */
+.rv-mode-Grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 1024px) {
+  .rv-mode-Grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .rv-mode-Grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.rv-mode-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 14px;
+  border-radius: 13px;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.16s ease;
+}
+
+.rv-mode-card:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+}
+
+.rv-mode-card.is-active {
+  background: #ffffff;
+  border-color: #ffffff;
+  color: #163124;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+.rv-mode-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  flex-shrink: 0;
+}
+
+.rv-mode-icon.is-slate {
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+}
+.rv-mode-card.is-active .rv-mode-icon.is-slate {
+  background: #eef5f0;
+  color: #1f4334;
+}
+
+.rv-mode-icon.is-amber {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.rv-mode-icon.is-rose {
+  background: #ffe4e6;
+  color: #e11d48;
+}
+
+.rv-mode-icon.is-emerald {
+  background: #d1fae5;
+  color: #059669;
+}
+
+.rv-mode-icon.is-indigo {
+  background: #e0e7ff;
+  color: #4f46e5;
+}
+
+.rv-mode-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.rv-mode-text strong {
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.rv-mode-text span {
+  font-size: 0.74rem;
+  opacity: 0.82;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================================
+   PANEL CHUNG & DANH SÁCH TỪ VỰNG SỔ TAY (MÀN 0)
+   ========================================================================== */
+
+.rv-panel {
+  background: #ffffff;
+  border: 1px solid #e3eae5;
+  border-radius: 18px;
+  padding: 22px 24px;
+  box-shadow: 0 2px 12px rgba(22, 49, 36, 0.04);
+}
+
+.rv-list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #edf2ee;
+  margin-bottom: 18px;
+}
+
+.rv-filter-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rv-filter-tab {
+  padding: 7px 14px;
+  border-radius: 9px;
+  border: 1px solid #dce5df;
+  background: #f8fbf9;
+  color: #49594f;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-filter-tab.is-active {
+  background: #1f4334;
+  border-color: #1f4334;
+  color: #ffffff;
+}
+
+.rv-list-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.rv-search-input {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #d5e0d8;
+  font-size: 0.84rem;
+  min-width: 220px;
+  outline: none;
+}
+
+.rv-search-input:focus {
+  border-color: #1f4334;
+}
+
+.rv-toggle-chip {
+  padding: 7px 12px;
+  border-radius: 9px;
+  border: 1px solid #d8e2dc;
+  background: #f9fbfa;
+  color: #46564c;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-toggle-chip.is-on {
+  background: #eef5f0;
+  border-color: #1f4334;
+  color: #163124;
+}
+
+.rv-btn-add-word {
+  padding: 8px 14px;
+  border-radius: 9px;
+  border: none;
+  background: #1f4334;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-btn-add-word:hover {
+  background: #295743;
+}
+
+/* Danh sách thẻ từ vựng trong sổ tay */
+.rv-word-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rv-word-card {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid #e4ece6;
+  background: #fcfdfc;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rv-word-card:hover {
+  border-color: #b4cbbd;
+  box-shadow: 0 4px 12px rgba(22, 49, 36, 0.05);
+}
+
+.rv-word-card.is-memorized {
+  border-left: 4px solid #16a34a;
+}
+
+.rv-word-card.is-learning {
+  border-left: 4px solid #eab308;
+}
+
+.rv-word-card.is-unlearned {
+  border-left: 4px solid #cbd5e1;
+}
+
+.rv-word-card-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex: 1;
+  min-width: 280px;
+}
+
+.rv-word-index {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #eef4f0;
+  color: #295743;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.rv-word-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.rv-word-hanzi-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.rv-word-hanzi {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', 'Microsoft YaHei', serif;
+  font-size: 1.55rem;
+  font-weight: 700;
+  color: #122018;
+  cursor: pointer;
+}
+
+.rv-word-hanzi:hover {
+  color: #1f4334;
+  text-decoration: underline;
+}
+
+.rv-word-pinyin {
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: #c4463a;
+}
+
+.rv-word-hidden-mask {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #eef2ef;
+  color: #88968d;
+  font-size: 0.8rem;
+}
+
+.rv-word-pos {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #f0f5f2;
+  color: #4b5e52;
+  font-size: 0.74rem;
+  font-weight: 600;
+}
+
+.rv-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid #d5e2d9;
+  background: #f4f9f6;
+  color: #1f4334;
+  cursor: pointer;
+}
+
+.rv-icon-btn:hover {
+  background: #1f4334;
+  color: #ffffff;
+}
+
+.rv-word-meaning {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1c2b22;
+}
+
+.rv-word-meaning.is-masked {
+  font-weight: 500;
+  font-style: italic;
+  color: #8a9990;
+}
+
+.rv-word-example {
+  margin-top: 4px;
+  padding: 9px 12px;
+  border-radius: 10px;
+  background: #f5f8f6;
+  border: 1px solid #e6ede8;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rv-example-zh {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #203127;
+}
+
+.rv-example-audio {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: transparent;
+  color: #295743;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-example-py {
+  font-size: 0.78rem;
+  color: #5b6b61;
+}
+
+.rv-example-vi {
+  font-size: 0.8rem;
+  color: #48574e;
+}
+
+.rv-word-card-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.rv-status-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #d5e0d8;
+  background: #ffffff;
+  color: #49594f;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-status-btn.is-memorized {
+  background: #dcfce7;
+  border-color: #86efac;
+  color: #166534;
+}
+
+.rv-quick-practice-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rv-mini-practice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #dce6df;
+  background: #f7faf8;
+  color: #1f4334;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-mini-practice-btn:hover {
+  background: #1f4334;
+  border-color: #1f4334;
+  color: #ffffff;
+}
+
+/* ==========================================================================
+   MÀN 1: CHẾ ĐỘ ÔN TẬP (QUIZ / TRẮC NGHIỆM & ĐIỀN TỪ)
+   ========================================================================== */
+
+.rv-submode-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #edf2ee;
+  margin-bottom: 20px;
+}
+
+.rv-submode-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.rv-submode-pill {
+  padding: 7px 13px;
+  border-radius: 9px;
+  border: 1px solid #dce5df;
+  background: #f8fbf9;
+  color: #46564c;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-submode-pill.is-active {
+  background: #1f4334;
+  border-color: #1f4334;
+  color: #ffffff;
+}
+
+.rv-quiz-score-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.rv-combo-badge,
+.rv-score-badge {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.rv-combo-badge {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+}
+
+.rv-score-badge {
+  background: #eef6f1;
+  border: 1px solid #c3dccd;
+  color: #1f4334;
+}
+
+.rv-quiz-stage {
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rv-quiz-progress-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 0.85rem;
+  color: #49594f;
+}
+
+.rv-quiz-progress-bar {
+  flex: 1;
+  height: 8px;
+  border-radius: 999px;
+  background: #e6eee9;
+  overflow: hidden;
+}
+
+.rv-quiz-progress-bar span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, #1f4334, #2d9b70);
+  border-radius: 999px;
+  transition: width 0.25s ease;
+}
+
+.rv-quiz-prompt-card {
+  padding: 28px 24px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #f8fbf9 0%, #f1f7f3 100%);
+  border: 1px solid #dce7e0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.rv-prompt-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #55665b;
+}
+
+.rv-prompt-hanzi-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rv-prompt-hanzi {
+  margin: 4px 0;
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', 'Microsoft YaHei', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #122018;
+}
+
+.rv-audio-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+  background: #1f4334;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.rv-prompt-pinyin {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #c4463a;
+}
+
+.rv-prompt-vi {
+  margin: 6px 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #163124;
+}
+
+.rv-prompt-sentence {
+  margin: 6px 0;
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', serif;
+  font-size: 1.6rem;
+  color: #122018;
+}
+
+.rv-prompt-hint {
+  margin: 0;
+  font-size: 0.86rem;
+  color: #295743;
+}
+
+.rv-big-listen-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 14px 24px;
+  border-radius: 14px;
+  border: none;
+  background: #1f4334;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.rv-quiz-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 600px) {
+  .rv-quiz-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rv-quiz-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 13px;
+  border: 1.5px solid #dce5df;
+  background: #ffffff;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+}
+
+.rv-quiz-option:hover:not(:disabled) {
+  border-color: #1f4334;
+  background: #f4f9f6;
+}
+
+.rv-quiz-option.is-correct {
+  border-color: #16a34a;
+  background: #dcfce7;
+  color: #14532d;
+}
+
+.rv-quiz-option.is-wrong {
+  border-color: #dc2626;
+  background: #fee2e2;
+  color: #7f1d1d;
+}
+
+.rv-opt-letter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: #eef4f0;
+  color: #1f4334;
+  font-size: 0.84rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.rv-opt-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rv-opt-hanzi {
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.rv-opt-pinyin {
+  font-size: 0.8rem;
+  color: #58695f;
+}
+
+.rv-opt-vi {
+  font-size: 0.96rem;
+  font-weight: 600;
+}
+
+.rv-fill-box {
+  display: flex;
+  gap: 10px;
+}
+
+.rv-fill-input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1.5px solid #cbd8cf;
+  font-size: 1rem;
+}
+
+.rv-quiz-feedback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 16px 18px;
+  border-radius: 13px;
+  background: #f3f8f5;
+  border: 1px solid #c9ded1;
+}
+
+.rv-feedback-word {
+  font-size: 1rem;
+  color: #15241b;
+}
+
+.rv-feedback-example {
+  margin-top: 4px;
+  font-size: 0.84rem;
+  color: #4f6156;
+}
+
+.rv-quiz-summary {
+  max-width: 520px;
+  margin: 20px auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.rv-summary-circle {
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: #eef6f1;
+  border: 4px solid #1f4334;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.rv-summary-circle strong {
+  font-size: 1.7rem;
+  color: #1f4334;
+}
+
+.rv-summary-circle span {
+  font-size: 0.76rem;
+  color: #4e6055;
+}
+
+.rv-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+/* ==========================================================================
+   MÀN 2 & 3: BỐ CỤC 2 CỘT CHO PHÁT ÂM & LUYỆN VIẾT
+   ========================================================================== */
+
+.rv-two-col-practice {
+  display: grid;
+  grid-template-columns: 270px minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
+}
+
+@media (max-width: 920px) {
+  .rv-two-col-practice {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rv-side-wordlist {
+  border: 1px solid #e3ebe6;
+  border-radius: 14px;
+  background: #fafcfb;
+  overflow: hidden;
+}
+
+.rv-side-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: #f0f5f2;
+  border-bottom: 1px solid #e2ebe5;
+}
+
+.rv-side-head h3 {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #18281f;
+}
+
+.rv-side-head span {
+  font-size: 0.76rem;
+  color: #5b6b61;
+}
+
+.rv-side-scroll {
+  max-height: 520px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  gap: 4px;
+}
+
+.rv-side-word-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rv-side-word-btn:hover {
+  background: #eef5f0;
+}
+
+.rv-side-word-btn.is-active {
+  background: #1f4334;
+  color: #ffffff;
+}
+
+.rv-side-word-left {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.rv-side-hanzi {
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.rv-side-pinyin {
+  font-size: 0.74rem;
+  opacity: 0.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rv-side-score {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.rv-side-score.is-high {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.rv-side-score.is-mid {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.rv-side-untested {
+  font-size: 0.72rem;
+  opacity: 0.65;
+  flex-shrink: 0;
+}
+
+/* Sân khấu Luyện phát âm */
+.rv-pron-stage,
+.rv-writing-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.rv-pron-top-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rv-step-counter {
+  font-size: 0.84rem;
+  color: #4b5c52;
+}
+
+.rv-pron-card {
+  padding: 28px 24px;
+  border-radius: 16px;
+  border: 1px solid #dce6df;
+  background: linear-gradient(180deg, #fafcfb 0%, #f3f8f5 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.rv-pron-badge {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #e7f0ea;
+  color: #1f4334;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.rv-pron-hanzi {
+  margin: 6px 0 0;
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', serif;
+  font-size: 3.4rem;
+  font-weight: 700;
+  color: #122018;
+}
+
+.rv-pron-hanzi.is-sentence {
+  font-size: 1.95rem;
+}
+
+.rv-pron-pinyin {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #c4463a;
+}
+
+.rv-pron-meaning {
+  margin: 0;
+  font-size: 1.05rem;
+  color: #2c3d33;
+  font-weight: 600;
+}
+
+.rv-listen-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.rv-btn-listen {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 11px;
+  border: 1px solid #1f4334;
+  background: #1f4334;
+  color: #ffffff;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-btn-listen.is-slow {
+  background: #ffffff;
+  color: #1f4334;
+}
+
+.rv-mic-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0 6px;
+}
+
+.rv-mic-button {
+  width: 74px;
+  height: 74px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(225, 29, 72, 0.32);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rv-mic-button:hover {
+  transform: scale(1.05);
+}
+
+.rv-mic-button.is-recording {
+  animation: rv-pulse 1.2s infinite;
+  background: #dc2626;
+}
+
+@keyframes rv-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 18px rgba(220, 38, 38, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0);
+  }
+}
+
+.rv-mic-caption {
+  font-size: 0.82rem;
+  color: #55665c;
+  font-weight: 500;
+}
+
+.rv-pron-result-box {
+  width: 100%;
+  max-width: 540px;
+  margin-top: 8px;
+  padding: 14px 18px;
+  border-radius: 13px;
+  background: #ffffff;
+  border: 1px solid #d5e2d9;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.rv-pron-score-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.rv-pron-score-circle {
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.rv-pron-score-circle.is-good {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.rv-pron-score-circle.is-warn {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.rv-recognized-line {
+  margin: 0 0 4px;
+  font-size: 0.88rem;
+  color: #16241b;
+}
+
+.rv-feedback-line {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #495a50;
+}
+
+.rv-audio-playback {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px dashed #e2ebe5;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #324439;
+}
+
+.rv-audio-player {
+  height: 34px;
+}
+
+/* ==========================================================================
+   MÀN 3: CHẾ ĐỘ LUYỆN VIẾT (THỨ TỰ NÉT BÚT ĐỎ & CANVAS)
+   ========================================================================== */
+
+.rv-writing-word-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  background: #f5f9f6;
+  border: 1px solid #dce7e0;
+}
+
+.rv-writing-word-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.rv-writing-word-title h3 {
+  margin: 0;
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', serif;
+  font-size: 1.75rem;
+  color: #122018;
+}
+
+.rv-writing-word-py {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #c4463a;
+}
+
+.rv-writing-word-vi {
+  margin: 4px 0 0;
+  font-size: 0.88rem;
+  color: #3a4c40;
+}
+
+.rv-char-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rv-char-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1.5px solid #d5e0d8;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.rv-char-tab.is-active {
+  border-color: #1f4334;
+  background: #1f4334;
+  color: #ffffff;
+}
+
+.rv-char-tab.is-done:not(.is-active) {
+  border-color: #86efac;
+  background: #f0fdf4;
+}
+
+.rv-char-tab-hanzi {
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.rv-char-tab-num {
+  font-size: 0.68rem;
+  opacity: 0.8;
+}
+
+.rv-writing-boards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+@media (max-width: 720px) {
+  .rv-writing-boards {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rv-board-card {
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid #e2ebe5;
+  background: #fafcfb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.rv-board-head {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 0.84rem;
+  color: #1b2c22;
+}
+
+.rv-board-tools {
+  display: flex;
+  gap: 6px;
+}
+
+.rv-mini-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 7px;
+  border: 1px solid #cde0d4;
+  background: #eef5f0;
+  color: #1f4334;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-mini-action-btn.is-danger {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.rv-board-box {
+  width: 100%;
+  max-width: 260px;
+  aspect-ratio: 1 / 1;
+  position: relative;
+}
+
+.rv-hanzi-cell {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 1 / 1;
+}
+
+.rv-hanzi-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.rv-write-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.rv-stroke-step-pills {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 5px;
+}
+
+.rv-stroke-pill {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #dce5df;
+  background: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #4e5e54;
+  cursor: pointer;
+}
+
+.rv-stroke-pill.is-passed {
+  background: #eef5f0;
+  color: #1f4334;
+}
+
+.rv-stroke-pill.is-active {
+  background: #e11d48;
+  border-color: #e11d48;
+  color: #ffffff;
+}
+
+.rv-canvas-toolbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rv-grid-selector {
+  display: flex;
+  gap: 4px;
+}
+
+.rv-mini-pill {
+  padding: 4px 9px;
+  border-radius: 6px;
+  border: 1px solid #d8e2dc;
+  background: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-mini-pill.is-active {
+  background: #1f4334;
+  border-color: #1f4334;
+  color: #ffffff;
+}
+
+.rv-ink-selector {
+  display: flex;
+  gap: 6px;
+}
+
+.rv-ink-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px #cbd5e1;
+  cursor: pointer;
+}
+
+.rv-ink-dot.is-active {
+  box-shadow: 0 0 0 2px #1f4334;
+  transform: scale(1.1);
+}
+
+.rv-stroke-decomposition {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #f8fbf9;
+  border: 1px solid #e3ece6;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rv-decomp-label {
+  font-size: 0.8rem;
+  color: #46584d;
+}
+
+.rv-decomp-row {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(44px, 1fr));
+  gap: 6px;
+  overflow-x: auto;
+}
+
+/* ==========================================================================
+   MÀN 4: FLASHCARD (LẬT THẺ 2 MẶT, AUTO-PLAY, SRS)
+   ========================================================================== */
+
+.rv-fc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #edf2ee;
+  margin-bottom: 20px;
+}
+
+.rv-fc-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.rv-fc-stage {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.rv-flashcard-box {
+  min-height: 340px;
+  border-radius: 20px;
+  border: 1.5px solid #d5e2d9;
+  background: linear-gradient(180deg, #ffffff 0%, #f5f9f7 100%);
+  box-shadow: 0 12px 32px rgba(22, 49, 36, 0.08);
+  padding: 24px 28px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.rv-flashcard-box:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(22, 49, 36, 0.12);
+}
+
+.rv-fc-face {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 290px;
+  gap: 16px;
+}
+
+.rv-fc-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.rv-fc-deck-tag {
+  padding: 4px 11px;
+  border-radius: 999px;
+  background: #eef5f0;
+  color: #1f4334;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.rv-fc-status-dot {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+.rv-fc-status-dot.is-memorized {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.rv-fc-status-dot.is-learning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.rv-fc-status-dot.is-unlearned {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.rv-fc-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  margin: auto 0;
+}
+
+.rv-fc-big-hanzi {
+  margin: 0;
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', serif;
+  font-size: 4.2rem;
+  font-weight: 700;
+  color: #122018;
+}
+
+.rv-fc-big-vi {
+  margin: 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #163124;
+}
+
+.rv-fc-prompt-label {
+  font-size: 0.82rem;
+  color: #5a6b60;
+}
+
+.rv-fc-hint-btn {
+  padding: 5px 12px;
+  border-radius: 999px;
+  border: 1px dashed #9ab8a6;
+  background: #f8fbf9;
+  color: #295743;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-fc-hint-pinyin {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #c4463a;
+}
+
+.rv-fc-card-foot {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #6b7c71;
+  padding-top: 10px;
+  border-top: 1px dashed #e2ebe5;
+}
+
+.rv-fc-back-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.rv-fc-back-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rv-fc-back-hanzi {
+  margin: 0;
+  font-family: 'Noto Serif SC', 'Kaiti SC', 'KaiTi', 'Songti SC', 'SimSun', serif;
+  font-size: 2.5rem;
+  color: #122018;
+}
+
+.rv-fc-back-pinyin {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #c4463a;
+}
+
+.rv-fc-back-meaning {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #163124;
+}
+
+.rv-fc-example-card {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: #f2f7f4;
+  border: 1px solid #dce7e0;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.rv-fc-ex-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: #295743;
+}
+
+.rv-fc-ex-zh {
+  margin: 2px 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #15231b;
+}
+
+.rv-fc-ex-py {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #5b6c61;
+}
+
+.rv-fc-ex-vi {
+  margin: 0;
+  font-size: 0.84rem;
+  color: #38493f;
+}
+
+/* 4 Nút SRS */
+.rv-srs-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+@media (max-width: 560px) {
+  .rv-srs-buttons {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.rv-srs-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 12px 10px;
+  border-radius: 12px;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  transition: transform 0.14s ease;
+}
+
+.rv-srs-btn:hover {
+  transform: translateY(-2px);
+}
+
+.rv-srs-btn strong {
+  font-size: 0.9rem;
+}
+
+.rv-srs-btn span {
+  font-size: 0.72rem;
+  opacity: 0.85;
+}
+
+.rv-srs-btn.is-again {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.rv-srs-btn.is-hard {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.rv-srs-btn.is-good {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.rv-srs-btn.is-easy {
+  background: #1f4334;
+  border-color: #1f4334;
+  color: #ffffff;
+}
+
+.rv-fc-nav-row,
+.rv-stage-nav-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+/* --- Nút bấm dùng chung & Modal thêm từ --- */
+.rv-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 11px;
+  border: none;
+  background: #1f4334;
+  color: #ffffff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-btn-primary:hover:not(:disabled) {
+  background: #295743;
+}
+
+.rv-btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.rv-btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: 11px;
+  border: 1px solid #cbd8cf;
+  background: #ffffff;
+  color: #1f4334;
+  font-size: 0.86rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-btn-secondary:hover:not(:disabled) {
+  background: #eef5f0;
+}
+
+.rv-btn-secondary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.rv-empty-state {
+  padding: 36px 20px;
+  text-align: center;
+  color: #5b6b61;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Modal thêm từ mới */
+.rv-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background: rgba(15, 29, 22, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.rv-modal-card {
+  width: 100%;
+  max-width: 540px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #dce5df;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.22);
+}
+
+.rv-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  background: #1f4334;
+  color: #ffffff;
+}
+
+.rv-modal-head h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.rv-modal-close {
+  border: none;
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.rv-modal-form {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.rv-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.rv-modal-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rv-modal-form label span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #36473d;
+}
+
+.rv-modal-form input {
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid #cfdcd3;
+  font-size: 0.88rem;
+}
+
+.rv-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 6px;
+}
