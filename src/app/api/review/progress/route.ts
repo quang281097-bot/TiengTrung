@@ -16,14 +16,123 @@ export async function POST(request: Request) {
     const body = await request.json();
     const action = body.action || 'rate_word';
 
+    if (action === 'create_deck') {
+      const title = String(body.title || '').trim();
+      if (!title || title.length > 60) {
+        return NextResponse.json(
+          { ok: false, error: 'Tên sổ tay phải có từ 1 đến 60 ký tự.' },
+          { status: 400 },
+        );
+      }
+
+      const result = await pool.query(
+        `INSERT INTO bo_tu_vung (owner_id, kind, title)
+         VALUES ($1, 'custom', $2)
+         RETURNING id, title`,
+        [userId, title],
+      );
+      revalidatePath('/review');
+      return NextResponse.json({ ok: true, deck: result.rows[0] });
+    }
+
+    if (action === 'add_dictionary_word') {
+      const rawDeckId = body.deckId;
+      const deckId =
+        typeof rawDeckId === 'string' && /^custom-\d+$/.test(rawDeckId)
+          ? Number(rawDeckId.slice('custom-'.length))
+          : null;
+      const wordId = Number(body.wordId);
+      if (deckId === null || !Number.isInteger(wordId) || wordId < 1) {
+        return NextResponse.json(
+          { ok: false, error: 'Sổ tay hoặc từ vựng không hợp lệ.' },
+          { status: 400 },
+        );
+      }
+
+      const client = await pool.connect();
+      try {
+        await client.query('BEGIN');
+        const deckRes = await client.query(
+          `SELECT id
+           FROM bo_tu_vung
+           WHERE id = $1 AND owner_id = $2 AND kind = 'custom'
+           FOR UPDATE`,
+          [deckId, userId],
+        );
+        if (deckRes.rowCount === 0) {
+          await client.query('ROLLBACK');
+          return NextResponse.json(
+            { ok: false, error: 'Không tìm thấy sổ tay cá nhân.' },
+            { status: 404 },
+          );
+        }
+
+        const wordRes = await client.query(
+          `SELECT w.id, w.hanzi, w.pinyin, COALESCE(w.hsk_level, 1) AS "hskLevel",
+                  COALESCE((
+                    SELECT s.meaning_vi
+                    FROM tu_vung_nghia s
+                    WHERE s.word_id = w.id
+                    ORDER BY s.position, s.id
+                    LIMIT 1
+                  ), '') AS "meaningVi",
+                  COALESCE((
+                    SELECT s.part_of_speech
+                    FROM tu_vung_nghia s
+                    WHERE s.word_id = w.id
+                    ORDER BY s.position, s.id
+                    LIMIT 1
+                  ), 'Từ vựng') AS "partOfSpeech"
+           FROM tu_vung w
+           WHERE w.id = $1`,
+          [wordId],
+        );
+        if (wordRes.rowCount === 0) {
+          await client.query('ROLLBACK');
+          return NextResponse.json(
+            { ok: false, error: 'Không tìm thấy từ trong từ điển.' },
+            { status: 404 },
+          );
+        }
+
+        await client.query(
+          `INSERT INTO tu_trong_bo_tu_vung (deck_id, word_id, position)
+           VALUES (
+             $1,
+             $2,
+             COALESCE((SELECT max(position) + 1 FROM tu_trong_bo_tu_vung WHERE deck_id = $1), 0)
+           )
+           ON CONFLICT (deck_id, word_id) DO NOTHING`,
+          [deckId, wordId],
+        );
+        await client.query('COMMIT');
+        revalidatePath('/review');
+        return NextResponse.json({ ok: true, word: wordRes.rows[0] });
+      } catch (error) {
+        await client.query('ROLLBACK');
+        throw error;
+      } finally {
+        client.release();
+      }
+    }
+
     if (action === 'add_word') {
       const hanzi = String(body.hanzi || '').trim();
       const pinyin = String(body.pinyin || '').trim();
       const meaningVi = String(body.meaningVi || '').trim();
-      const hskLevel = Math.min(7, Math.max(1, Number(body.hskLevel) || 1));
+      const rawHskLevel = body.hskLevel;
+      const hskLevel =
+        rawHskLevel === null || rawHskLevel === undefined || rawHskLevel === ''
+          ? null
+          : Number(rawHskLevel);
       const exHanzi = String(body.exHanzi || '').trim();
       const exPinyin = String(body.exPinyin || '').trim();
       const exVi = String(body.exVi || '').trim();
+      const rawDeckId = body.deckId;
+      const deckId =
+        typeof rawDeckId === 'string' && /^custom-\d+$/.test(rawDeckId)
+          ? Number(rawDeckId.slice('custom-'.length))
+          : null;
 
       if (!hanzi || !meaningVi) {
         return NextResponse.json(
@@ -31,16 +140,39 @@ export async function POST(request: Request) {
           { status: 400 },
         );
       }
+      if (hskLevel !== null && (!Number.isInteger(hskLevel) || hskLevel < 1 || hskLevel > 7)) {
+        return NextResponse.json({ ok: false, error: 'Cấp HSK không hợp lệ.' }, { status: 400 });
+      }
+      if (rawDeckId !== undefined && deckId === null) {
+        return NextResponse.json({ ok: false, error: 'Sổ tay không hợp lệ.' }, { status: 400 });
+      }
 
       const client = await pool.connect();
       let word: Record<string, unknown>;
       try {
         await client.query('BEGIN');
+        if (deckId !== null) {
+          const deckRes = await client.query(
+            `SELECT id
+             FROM bo_tu_vung
+             WHERE id = $1 AND owner_id = $2 AND kind = 'custom'
+             FOR UPDATE`,
+            [deckId, userId],
+          );
+          if (deckRes.rowCount === 0) {
+            await client.query('ROLLBACK');
+            return NextResponse.json(
+              { ok: false, error: 'Không tìm thấy sổ tay cá nhân.' },
+              { status: 404 },
+            );
+          }
+        }
+
         const wordRes = await client.query(
           `INSERT INTO tu_vung (hanzi, pinyin, hsk_level)
            VALUES ($1, $2, $3)
          ON CONFLICT (hanzi, pinyin) DO UPDATE
-           SET hsk_level = EXCLUDED.hsk_level
+           SET hsk_level = COALESCE(tu_vung.hsk_level, EXCLUDED.hsk_level)
            RETURNING id, hanzi, pinyin, hsk_level AS "hskLevel"`,
           [hanzi, pinyin || hanzi, hskLevel],
         );
@@ -56,6 +188,19 @@ export async function POST(request: Request) {
            ON CONFLICT (word_id, meaning_vi) DO NOTHING`,
           [dictionaryWord.id, meaningVi],
         );
+
+        if (deckId !== null) {
+          await client.query(
+            `INSERT INTO tu_trong_bo_tu_vung (deck_id, word_id, position)
+             VALUES (
+               $1,
+               $2,
+               COALESCE((SELECT max(position) + 1 FROM tu_trong_bo_tu_vung WHERE deck_id = $1), 0)
+             )
+             ON CONFLICT (deck_id, word_id) DO NOTHING`,
+            [deckId, dictionaryWord.id],
+          );
+        }
 
         if (exHanzi) {
           const sentRes = await client.query(
@@ -88,7 +233,7 @@ export async function POST(request: Request) {
       }
 
       revalidatePath('/review');
-      return NextResponse.json({ ok: true, word });
+      return NextResponse.json({ ok: true, word, deckId: rawDeckId ?? null });
     }
 
     if (action === 'complete_session') {
