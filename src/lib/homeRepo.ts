@@ -45,9 +45,10 @@ export async function getHomeData(userId: string = DEMO_USER_ID): Promise<HomeDa
   if (!pool) return fallback();
 
   try {
-    const [header, stats, week, lesson, course] = await Promise.all([
+    const [header, stats, week, lesson, recentReading, course, readingCourse] = await Promise.all([
       pool.query(
         `SELECT u.display_name,
+                u.role,
                 CASE WHEN u.last_study_date >= local_today(u.id) - 1 THEN u.current_streak ELSE 0 END AS streak,
                 local_today(u.id)::text AS today
          FROM nguoi_dung u WHERE u.id = $1`,
@@ -55,8 +56,14 @@ export async function getHomeData(userId: string = DEMO_USER_ID): Promise<HomeDa
       ),
       pool.query(
         `SELECT
-           (SELECT count(*) FROM tien_do_bai_hoc WHERE user_id = $1 AND completed_at IS NOT NULL)::int AS lessons_done,
-           (SELECT count(*) FROM tien_do_bai_hoc WHERE user_id = $1 AND completed_at >= now() - interval '7 days')::int AS lessons_7d,
+           (
+             (SELECT count(*) FROM tien_do_bai_hoc WHERE user_id = $1 AND completed_at IS NOT NULL) +
+             (SELECT count(*) FROM tien_do_bai_doc WHERE user_id = $1 AND completed_at IS NOT NULL)
+           )::int AS lessons_done,
+           (
+             (SELECT count(*) FROM tien_do_bai_hoc WHERE user_id = $1 AND completed_at >= now() - interval '7 days') +
+             (SELECT count(*) FROM tien_do_bai_doc WHERE user_id = $1 AND completed_at >= now() - interval '7 days')
+           )::int AS lessons_7d,
            (SELECT coalesce(sum(seconds), 0) / 60 FROM hoat_dong_hang_ngay WHERE user_id = $1 AND day = local_today($1))::int AS today_minutes,
            (SELECT daily_goal_minutes FROM cai_dat_nguoi_dung WHERE user_id = $1) AS goal_minutes,
            (SELECT round(coalesce(sum(seconds), 0) / 3600.0, 1) FROM hoat_dong_hang_ngay WHERE user_id = $1)::float AS total_hours`,
@@ -81,6 +88,18 @@ export async function getHomeData(userId: string = DEMO_USER_ID): Promise<HomeDa
         [userId],
       ),
       pool.query(
+        `SELECT c.title AS course, c.hsk_level, r.id, r.title_vi AS title, r.title_zh, r.est_minutes,
+                p.completed_at IS NOT NULL AS completed,
+                to_char(p.last_activity_at AT TIME ZONE user_tz($1), 'HH24:MI') AS active_time,
+                (p.last_activity_at AT TIME ZONE user_tz($1))::date = local_today($1) AS active_today
+         FROM tien_do_bai_doc p
+         JOIN bai_doc r ON r.id = p.reading_id
+         JOIN khoa_hoc c ON c.id = r.course_id
+         WHERE p.user_id = $1
+         ORDER BY p.last_activity_at DESC LIMIT 1`,
+        [userId],
+      ),
+      pool.query(
         `SELECT c.title, count(l.id)::int AS lessons_total, count(p.completed_at)::int AS lessons_done
          FROM khoa_hoc_nguoi_dung uc
          JOIN khoa_hoc c ON c.id = uc.course_id
@@ -88,6 +107,18 @@ export async function getHomeData(userId: string = DEMO_USER_ID): Promise<HomeDa
          LEFT JOIN tien_do_bai_hoc p ON p.lesson_id = l.id AND p.user_id = uc.user_id
          WHERE uc.user_id = $1 AND uc.status = 'current'
          GROUP BY c.id`,
+        [userId],
+      ),
+      pool.query(
+        `SELECT c.title, c.hsk_level,
+                count(r.id)::int AS readings_total,
+                count(p.completed_at)::int AS readings_done
+         FROM khoa_hoc c
+         JOIN bai_doc r ON r.course_id = c.id AND r.is_published
+         LEFT JOIN tien_do_bai_doc p ON p.reading_id = r.id AND p.user_id = $1
+         GROUP BY c.id, c.title, c.hsk_level
+         ORDER BY (count(p.completed_at) > 0) DESC, c.hsk_level ASC
+         LIMIT 1`,
         [userId],
       ),
     ]);
@@ -103,7 +134,10 @@ export async function getHomeData(userId: string = DEMO_USER_ID): Promise<HomeDa
     const result: HomeData = {
       ...fallback(),
       fromDatabase: true,
-      learner: { name: h.display_name, role: fallbackLearner.role },
+      learner: {
+        name: h.display_name,
+        role: h.role === 'admin' ? 'Quản trị viên' : fallbackLearner.role,
+      },
       todayLabel: `${DOW_LONG[todayDate.getUTCDay()]}, ${pad(d)}/${pad(m)}/${y}`,
       dailyGoalMinutes: goal,
       stats: [
@@ -120,6 +154,7 @@ export async function getHomeData(userId: string = DEMO_USER_ID): Promise<HomeDa
     };
 
     const l = lesson.rows[0];
+    const rr = recentReading.rows[0];
     if (l) {
       result.recentLesson = {
         ...fallbackLesson,
@@ -133,11 +168,64 @@ export async function getHomeData(userId: string = DEMO_USER_ID): Promise<HomeDa
         partsDone: l.parts_done,
         partsTotal: l.parts_total,
       };
+    } else if (rr) {
+      result.recentLesson = {
+        ...fallbackLesson,
+        time: rr.active_today ? `Hôm nay, ${rr.active_time}` : 'Gần đây',
+        thumbTag: `${rr.course} · Luyện đọc`,
+        thumbHanzi: (rr.title_zh as string | null)?.replace(/[^\u4e00-\u9fff]/g, '').slice(0, 2) || '阅读',
+        thumbCaption: 'Đọc hiểu đoạn văn',
+        course: rr.course,
+        topic: 'Luyện đọc',
+        title: rr.title,
+        description: rr.completed
+          ? 'Bạn đã hoàn thành bài đọc này. Tiếp tục đọc bài tiếp theo trong lộ trình HSK.'
+          : 'Đang luyện đọc dở bài này.',
+        partsDone: rr.completed ? 1 : 0,
+        partsTotal: 1,
+        remaining: `${rr.est_minutes ?? 4} phút đọc`,
+        href: '/practice',
+      };
+    } else {
+      result.recentLesson = {
+        ...fallbackLesson,
+        time: 'Chưa bắt đầu',
+        thumbTag: 'HSK 1 · Bài 01',
+        thumbHanzi: '你好',
+        thumbCaption: 'Khởi đầu mới',
+        course: 'HSK 1',
+        topic: 'Giao tiếp cơ bản',
+        title: 'Bài 01: Xin chào',
+        description: 'Bắt đầu bài học đầu tiên để ghi nhận tiến độ của bạn.',
+        partsDone: 0,
+        partsTotal: 5,
+        remaining: 'Khoảng 10 phút',
+      };
     }
 
     const c = course.rows[0];
+    const rc = readingCourse.rows[0];
     if (c) {
       result.currentCourse = { ...fallbackCourse, title: c.title, lessonsDone: c.lessons_done, lessonsTotal: c.lessons_total };
+    } else if (rc) {
+      result.currentCourse = {
+        ...fallbackCourse,
+        title: `${rc.title} · Luyện đọc`,
+        lessonsDone: rc.readings_done,
+        lessonsTotal: rc.readings_total,
+        previous: rc.readings_done > 0 ? `Đã đọc ${rc.readings_done} bài trong ${rc.title}` : 'Chưa có bài đọc hoàn thành',
+        roadmapLabel: 'Mở danh sách bài đọc',
+        href: '/practice',
+      };
+    } else {
+      result.currentCourse = {
+        ...fallbackCourse,
+        title: 'HSK 1 · Sơ cấp',
+        lessonsDone: 0,
+        lessonsTotal: 16,
+        previous: 'Chưa có khoá học hoàn thành',
+        roadmapLabel: 'Xem lộ trình HSK 1',
+      };
     }
 
     return result;

@@ -1,3 +1,4 @@
+import { getSessionUser } from '../../lib/auth';
 import { getHomeData } from '../../lib/homeRepo';
 import CourseCard from './CourseCard';
 import RecentLessonCard from './RecentLessonCard';
@@ -7,8 +8,9 @@ import StudyTimeCard from './StudyTimeCard';
 
 /** Nội dung trang chủ — khung sidebar/header nằm ở app/(learn)/layout.tsx. */
 export default async function HomeDashboard() {
+  const sessionUser = await getSessionUser();
   const { learner, todayLabel, stats, studyWeek, dailyGoalMinutes, recentLesson, currentCourse, fromDatabase } =
-    await getHomeData();
+    await getHomeData(sessionUser?.id);
 
   return (
     <>

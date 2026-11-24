@@ -2,7 +2,7 @@
 -- Does not remove unrelated tables or the pg_trgm extension.
 DROP TABLE IF EXISTS
   users, user_settings, sessions, notifications, feedback,
-  courses, topics, lessons, sentences, words, word_examples,
+  courses, topics, lessons, bai_doc, sentences, words, word_examples,
   grammar_patterns, speakers, dialogues, dialogue_lines, quizzes,
   quiz_questions, speaking_sets, speaking_items, hanzi_characters,
   daily_sentences, decks, deck_words, user_decks, srs_cards,

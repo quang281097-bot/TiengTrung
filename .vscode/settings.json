@@ -1,0 +1,13 @@
+{
+  "sqltools.connections": [
+    {
+      "name": "TiengTrung (local)",
+      "driver": "PostgreSQL",
+      "server": "localhost",
+      "port": 5432,
+      "database": "TiengTrung",
+      "username": "postgres",
+      "askForPassword": true
+    }
+  ]
+}

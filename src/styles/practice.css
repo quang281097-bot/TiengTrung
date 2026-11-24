@@ -22,8 +22,12 @@
 }
 
 .lx-row-practice {
-  grid-template-columns: minmax(0, 1.65fr) minmax(280px, 1fr);
+  grid-template-columns: minmax(0, 1.8fr) minmax(320px, 1fr);
   align-items: start;
+}
+
+.lx-shell.is-sidebar-collapsed .lx-row-practice {
+  grid-template-columns: minmax(0, 2fr) minmax(340px, 1fr);
 }
 
 .lx-stack {

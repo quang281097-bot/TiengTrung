@@ -28,6 +28,7 @@ Database cho app học tiếng Trung (Next.js), thiết kế theo đúng các m�
 | Nội dung học | `khoa_hoc` | Các khóa học HSK |
 | Nội dung học | `chu_de` | Chủ đề học tập |
 | Nội dung học | `bai_hoc` | Bài học và các bước học |
+| Nội dung học | `bai_doc` | Bài đọc theo HSK, bản dịch, pinyin, mảng `important_vocabulary` và ảnh minh họa tùy chọn |
 | Nội dung học | `cau_tieng_trung` | Câu tiếng Trung, pinyin, âm thanh và nghĩa |
 | Nội dung học | `tu_vung` | Từ vựng và thông tin tra cứu |
 | Nội dung học | `vi_du_tu_vung` | Liên kết từ vựng với câu ví dụ |
@@ -391,6 +392,12 @@ $env:PGCLIENTENCODING = 'UTF8'
 & 'C:\Program Files\PostgreSQL\17\bin\psql.exe' -U postgres -h localhost -p 5432 -d TiengTrung -f database/seed.sql
 ```
 
+**Database đã có schema trước khi thêm Luyện đọc:** chạy lần lượt `migrations/2026-11-24-add-reading.sql`, `migrations/2026-11-24-add-reading-samples.sql`, `migrations/2026-11-24-fix-reading-sample-count.sql`, `migrations/2026-11-24-add-reading-vocabulary.sql` và `migrations/2026-11-24-add-reading-image.sql` một lần. Kết quả có 10 bài đọc cho mỗi cấp HSK 1–6 (60 bài tổng cộng), mỗi bài có từ vựng trọng tâm và có thể gắn ảnh.
+
+**Database mới:** sau `schema.sql` và `seed.sql`, chạy `migrations/2026-11-24-add-reading-samples.sql`, `migrations/2026-11-24-add-reading-vocabulary.sql`, `migrations/2026-11-24-add-reading-image.sql` và `migrations/2026-11-24-add-reading-progress.sql` để nạp bài đọc, từ vựng, ảnh và tiến độ hoàn thành theo tài khoản.
+
+Ảnh do admin tải lên được lưu trong `public/uploads/readings/` (JPEG, PNG hoặc WebP, tối đa 5 MB); thư mục này được Git bỏ qua. Khi triển khai lên dịch vụ có filesystem tạm thời, cần chuyển phần lưu ảnh sang object storage.
+
 **Supabase / Neon:** dán lần lượt `schema.sql` rồi `seed.sql` vào SQL Editor.
 
 **Kết nối từ Next.js:** cài `pg`, đặt `DATABASE_URL` trong `.env.local`, chạy truy vấn trong Route Handler hoặc Server Component, với `$1` = id người học đang đăng nhập.
@@ -428,7 +435,7 @@ Cũng đã kiểm tra `award_xp` gọi hai lần với cùng `ref_key` chỉ c�
 
 | Nhu cầu | Cách làm |
 |---|---|
-| Luyện đọc (`/practice`) | Thêm `reading_passages` (bài đọc) trỏ vào `cau_tieng_trung`, câu hỏi dùng lại `bai_kiem_tra` (thêm giá trị `reading` vào CHECK của `bai_kiem_tra.kind`) |
+| Luyện đọc (`/practice`) | `bai_doc`, lọc theo `khoa_hoc.hsk_level`; sửa/xóa qua API chỉ dành cho admin |
 | Đăng nhập Google/Facebook | Dùng Auth.js với adapter Postgres, bỏ bảng `phien_dang_nhap` tự viết |
 | Một từ nhiều nghĩa | Tách `meaning_vi` ra bảng `word_senses` (`word_id`, `position`, `meaning_vi`, `part_of_speech`) |
 | Tìm nghĩa tiếng Việt không dấu ("thuc day") | Thêm extension `unaccent` và một cột sinh `meaning_search` |

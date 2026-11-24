@@ -25,9 +25,24 @@ export type IconName =
   | 'rotate'
   | 'target'
   | 'bulb'
+  | 'menu'
+  | 'panel-left'
   | 'x';
 
 const paths: Record<IconName, JSX.Element> = {
+  menu: (
+    <>
+      <line x1="4" x2="20" y1="12" y2="12" />
+      <line x1="4" x2="20" y1="6" y2="6" />
+      <line x1="4" x2="20" y1="18" y2="18" />
+    </>
+  ),
+  'panel-left': (
+    <>
+      <rect width="18" height="18" x="3" y="3" rx="2" />
+      <path d="M9 3v18" />
+    </>
+  ),
   user: (
     <>
       <circle cx="12" cy="8" r="4" />

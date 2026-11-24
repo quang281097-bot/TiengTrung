@@ -12,7 +12,9 @@ export default function StreakCard({ days, goalMinutes }: { days: StudyDay[]; go
     <article className="lx-streak">
       <p className="lx-streak-kicker">Đều đặn là chìa khoá</p>
       <h2 className="lx-streak-title">{streak} ngày liên tiếp</h2>
-      <p className="lx-streak-sub">Bạn đã học đủ {streak} ngày qua. Tiếp tục nhé!</p>
+      <p className="lx-streak-sub">
+        {streak > 0 ? `Bạn đã học đủ ${streak} ngày qua. Tiếp tục nhé!` : 'Bắt đầu học hôm nay để mở chuỗi ngày học nhé!'}
+      </p>
 
       <ol className="lx-streak-days">
         {days.map((day) => (

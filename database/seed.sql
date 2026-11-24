@@ -15,6 +15,28 @@ INSERT INTO khoa_hoc (slug, title, subtitle, hsk_level, position, is_published) 
   ('hsk-5', 'HSK 5', 'Trung cao cấp', 5, 5, true),
   ('hsk-6', 'HSK 6', 'Cao cấp',       6, 6, true);
 
+INSERT INTO bai_doc (course_id, slug, title_vi, title_zh, passage_zh, pinyin, translation_vi, est_minutes, is_published)
+SELECT c.id, r.slug, r.title_vi, r.title_zh, r.passage_zh, r.pinyin, r.translation_vi, r.est_minutes, true
+FROM (VALUES
+  ('hsk-1', 'hsk1-buoi-sang', 'Buổi sáng của An', '安的早晨', '安早上七点起床。他喝牛奶，然后去学校。', 'Ān zǎoshang qī diǎn qǐchuáng. Tā hē niúnǎi, ránhòu qù xuéxiào.', 'An thức dậy lúc bảy giờ sáng. Bạn ấy uống sữa rồi đi học.', 3),
+  ('hsk-2', 'hsk2-cuoi-tuan', 'Cuối tuần của tôi', '我的周末', '星期六我和朋友去公园。我们先跑步，再一起吃午饭。', 'Xīngqīliù wǒ hé péngyou qù gōngyuán. Wǒmen xiān pǎobù, zài yìqǐ chī wǔfàn.', 'Thứ Bảy tôi đi công viên với bạn. Chúng tôi chạy bộ trước rồi cùng ăn trưa.', 4),
+  ('hsk-3', 'hsk3-tiem-sach-nho', 'Hiệu sách nhỏ', '小书店', '我家附近有一家小书店。老板每天推荐一本新书，很多学生放学后去那里看书。', 'Wǒ jiā fùjìn yǒu yì jiā xiǎo shūdiàn. Lǎobǎn měitiān tuījiàn yì běn xīn shū, hěn duō xuésheng fàngxué hòu qù nàli kàn shū.', 'Gần nhà tôi có một hiệu sách nhỏ. Chủ tiệm mỗi ngày giới thiệu một cuốn sách mới; nhiều học sinh đến đó đọc sau giờ học.', 5),
+  ('hsk-4', 'hsk4-di-chuyen-xanh', 'Một chuyến đi xanh', '绿色出行', '为了减少空气污染，越来越多的人选择骑自行车或乘公共汽车上班。虽然有时需要多花一点时间，但城市变得更安静了。', 'Wèile jiǎnshǎo kōngqì wūrǎn, yuèláiyuè duō de rén xuǎnzé qí zìxíngchē huò chéng gōnggòng qìchē shàngbān. Suīrán yǒushí xūyào duō huā yìdiǎn shíjiān, dàn chéngshì biàn de gèng ānjìng le.', 'Để giảm ô nhiễm không khí, ngày càng nhiều người chọn đi xe đạp hoặc xe buýt đến nơi làm việc. Dù đôi khi mất thêm chút thời gian, thành phố trở nên yên tĩnh hơn.', 7),
+  ('hsk-5', 'hsk5-hoc-tu-thu-vien', 'Học tập ở thư viện', '在图书馆学习', '考试前，林娜习惯把任务分成几个小部分。她先查资料，再整理笔记，最后和同学讨论难题。她发现，有计划地学习比熬夜更有效。', 'Kǎoshì qián, Lín Nà xíguàn bǎ rènwu fēn chéng jǐ ge xiǎo bùfen. Tā xiān chá zīliào, zài zhěnglǐ bǐjì, zuìhòu hé tóngxué tǎolùn nántí. Tā fāxiàn, yǒu jìhuà de xuéxí bǐ áoyè gèng yǒuxiào.', 'Trước kỳ thi, Lâm Na thường chia nhiệm vụ thành vài phần nhỏ. Cô tra cứu tài liệu, sắp xếp ghi chú rồi thảo luận câu khó với bạn học. Cô nhận ra học có kế hoạch hiệu quả hơn thức khuya.', 8),
+  ('hsk-6', 'hsk6-thoi-quen-doc-sach', 'Thói quen đọc sách', '阅读的习惯', '阅读并不只是获取信息，也是一种整理思路的方式。当人们愿意停下来理解不同的观点，讨论就不再是为了证明谁对谁错，而是共同寻找更全面的答案。', 'Yuèdú bìng bù zhǐ shì huòqǔ xìnxī, yě shì yì zhǒng zhěnglǐ sīlù de fāngshì. Dāng rénmen yuànyì tíng xiàlái lǐjiě bùtóng de guāndiǎn, tǎolùn jiù bú zài shì wèile zhèngmíng shéi duì shéi cuò, ér shì gòngtóng xúnzhǎo gèng quánmiàn de dá''àn.', 'Đọc sách không chỉ để tiếp nhận thông tin mà còn là cách sắp xếp suy nghĩ. Khi mọi người sẵn lòng dừng lại để hiểu những góc nhìn khác nhau, thảo luận không còn nhằm chứng minh ai đúng ai sai mà trở thành quá trình cùng tìm câu trả lời toàn diện hơn.', 10)
+) AS r (course_slug, slug, title_vi, title_zh, passage_zh, pinyin, translation_vi, est_minutes)
+JOIN khoa_hoc c ON c.slug = r.course_slug
+ON CONFLICT (slug) DO UPDATE SET
+  course_id = EXCLUDED.course_id,
+  title_vi = EXCLUDED.title_vi,
+  title_zh = EXCLUDED.title_zh,
+  passage_zh = EXCLUDED.passage_zh,
+  pinyin = EXCLUDED.pinyin,
+  translation_vi = EXCLUDED.translation_vi,
+  est_minutes = EXCLUDED.est_minutes,
+  is_published = true,
+  updated_at = now();
+
 INSERT INTO chu_de (slug, name_vi, name_zh) VALUES
   ('greetings',  'Chào hỏi',           '问候'),
   ('family',     'Gia đình',           '家人'),

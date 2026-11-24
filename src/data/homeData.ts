@@ -61,6 +61,7 @@ export const pageTitles: Record<string, string> = {
   '/learn': 'Học ngay',
   '/lessons': 'Khoá học',
   '/practice': 'Luyện đọc',
+  '/practice/manage': 'Quản lý bài đọc',
   '/writing': 'Luyện viết',
   '/hsk': 'Thi HSK',
   '/vocabulary': 'Từ vựng',

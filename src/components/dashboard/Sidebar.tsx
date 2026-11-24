@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { courseLevels, examNav, primaryNav, skillNav } from '../../data/homeData';
 import type { NavLink } from '../../data/homeData';
 import Icon from '../ui/Icon';
+import { useSidebar } from './SidebarContext';
 
 function isActive(pathname: string, href: string) {
   if (href === '/') return pathname === '/' || pathname === '/dashboard';
@@ -30,14 +31,28 @@ function NavItem({ item, pathname }: { item: NavLink; pathname: string }) {
 export default function Sidebar() {
   const pathname = usePathname() ?? '/';
   const [coursesOpen, setCoursesOpen] = useState(true);
+  const { isCollapsed, toggleSidebar } = useSidebar();
   const coursesActive = pathname === '/lessons';
 
   return (
-    <aside className="lx-sidebar" aria-label="Điều hướng chính">
-      <Link href="/" className="lx-brand">
-        <span className="lx-brand-name">lǎoshi.</span>
-        <span className="lx-brand-tagline">Học mỗi ngày, tiến xa hơn</span>
-      </Link>
+    <aside className={`lx-sidebar${isCollapsed ? ' is-collapsed' : ''}`} aria-label="Điều hướng chính">
+      <div className="lx-sidebar-header">
+        <Link href="/" className="lx-brand">
+          <span className="lx-brand-name">
+            lǎoshi<span className="lx-brand-dot">.</span>
+          </span>
+          <span className="lx-brand-tagline">Học mỗi ngày, tiến xa hơn</span>
+        </Link>
+        <button
+          type="button"
+          className="lx-icon-button lx-sidebar-close-btn"
+          onClick={toggleSidebar}
+          aria-label="Thu gọn menu"
+          title="Thu gọn menu"
+        >
+          <Icon name="panel-left" size={17} />
+        </button>
+      </div>
 
       <div className="lx-sidebar-scroll">
         <p className="lx-nav-heading">Không gian học tập</p>
