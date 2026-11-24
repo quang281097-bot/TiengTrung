@@ -1,12 +1,4 @@
-import {
-  currentCourse,
-  dailyGoalMinutes,
-  homeStats,
-  learner,
-  recentLesson,
-  studyWeek,
-  todayLabel,
-} from '../../data/homeData';
+import { getHomeData } from '../../lib/homeRepo';
 import CourseCard from './CourseCard';
 import RecentLessonCard from './RecentLessonCard';
 import StatsCard from './StatsCard';
@@ -14,7 +6,10 @@ import StreakCard from './StreakCard';
 import StudyTimeCard from './StudyTimeCard';
 
 /** Nội dung trang chủ — khung sidebar/header nằm ở app/(learn)/layout.tsx. */
-export default function HomeDashboard() {
+export default async function HomeDashboard() {
+  const { learner, todayLabel, stats, studyWeek, dailyGoalMinutes, recentLesson, currentCourse, fromDatabase } =
+    await getHomeData();
+
   return (
     <>
       <section className="lx-greeting">
@@ -26,7 +21,7 @@ export default function HomeDashboard() {
       </section>
 
       <section className="lx-stats" aria-label="Thống kê học tập">
-        {homeStats.map((stat) => (
+        {stats.map((stat) => (
           <StatsCard key={stat.id} stat={stat} />
         ))}
       </section>
@@ -41,7 +36,9 @@ export default function HomeDashboard() {
         <CourseCard course={currentCourse} />
       </section>
 
-      <p className="lx-footnote">Số liệu minh hoạ cho giao diện học tập.</p>
+      <p className="lx-footnote">
+        {fromDatabase ? 'Số liệu lấy từ database.' : 'Số liệu minh hoạ cho giao diện học tập.'}
+      </p>
     </>
   );
 }
