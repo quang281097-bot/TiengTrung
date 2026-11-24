@@ -20,6 +20,14 @@ type HanziStrokeData = {
   strokes: string[];
 };
 
+type DictionaryLookupWord = {
+  id: number;
+  hanzi: string;
+  pinyin: string;
+  hskLevel: number | null;
+  meanings: { meaningVi: string; partOfSpeech: string }[];
+};
+
 const strokeCache = new Map<string, string[] | null>();
 const BATCH_SIZE = 30;
 
@@ -178,6 +186,17 @@ export default function ReviewNotebookHub({
   const [showPinyinList, setShowPinyinList] = useState<boolean>(true);
   const [showMeaningList, setShowMeaningList] = useState<boolean>(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false);
+  const [isCreateDeckModalOpen, setIsCreateDeckModalOpen] = useState<boolean>(false);
+  const [newDeckTitle, setNewDeckTitle] = useState('');
+  const [createDeckError, setCreateDeckError] = useState('');
+  const [deleteDeckError, setDeleteDeckError] = useState('');
+  const [deletingDeckId, setDeletingDeckId] = useState<string | null>(null);
+  const [addWordError, setAddWordError] = useState('');
+  const [dictionaryQuery, setDictionaryQuery] = useState('');
+  const [dictionaryResults, setDictionaryResults] = useState<DictionaryLookupWord[]>([]);
+  const [hasSearchedDictionary, setHasSearchedDictionary] = useState(false);
+  const [isSearchingDictionary, setIsSearchingDictionary] = useState(false);
+  const [isAttachingDictionaryWord, setIsAttachingDictionaryWord] = useState<number | null>(null);
   const [newWordForm, setNewWordForm] = useState({
     hanzi: '',
     pinyin: '',
@@ -187,6 +206,7 @@ export default function ReviewNotebookHub({
     exVi: '',
   });
   const [isSubmittingWord, setIsSubmittingWord] = useState(false);
+  const [isCreatingDeck, setIsCreatingDeck] = useState(false);
 
   // Sổ tay đang chọn
   const currentDeck = useMemo(
@@ -848,23 +868,30 @@ export default function ReviewNotebookHub({
     e.preventDefault();
     if (!newWordForm.hanzi.trim() || !newWordForm.meaningVi.trim() || !currentDeck) return;
     setIsSubmittingWord(true);
+    setAddWordError('');
     try {
       const res = await fetch('/api/review/progress', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'add_word',
+          ...(currentDeck.kind === 'custom' ? { deckId: currentDeck.id } : {}),
           hanzi: newWordForm.hanzi,
           pinyin: newWordForm.pinyin,
           meaningVi: newWordForm.meaningVi,
-          hskLevel: currentDeck.hskLevel,
+          hskLevel: currentDeck.kind === 'custom' ? null : currentDeck.hskLevel,
           exHanzi: newWordForm.exHanzi,
           exPinyin: newWordForm.exPinyin,
           exVi: newWordForm.exVi,
         }),
       });
       const json = await res.json();
-      if (json.ok && json.word) {
+      if (!res.ok || !json.ok || !json.word) {
+        setAddWordError(json.error || 'Không thể thêm từ vào sổ tay.');
+        return;
+      }
+
+      if (json.word) {
         const added: ReviewWordItem = {
           id: Number(json.word.id),
           hanzi: json.word.hanzi,
@@ -882,7 +909,9 @@ export default function ReviewNotebookHub({
         };
         setNotebooks((prev) =>
           prev.map((d) =>
-            d.id === currentDeck.id ? { ...d, words: [added, ...d.words] } : d,
+            d.id === currentDeck.id && !d.words.some((w) => w.id === added.id)
+              ? { ...d, words: [added, ...d.words] }
+              : d,
           ),
         );
         setNewWordForm({
@@ -895,8 +924,158 @@ export default function ReviewNotebookHub({
         });
         setIsAddModalOpen(false);
       }
+    } catch (error) {
+      console.error('[ReviewNotebookHub] Không thể thêm từ vào sổ tay:', error);
+      setAddWordError('Không thể kết nối để lưu từ. Vui lòng thử lại.');
     } finally {
       setIsSubmittingWord(false);
+    }
+  };
+
+  const handleCreateDeckSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const title = newDeckTitle.trim();
+    if (!title) return;
+
+    setIsCreatingDeck(true);
+    setCreateDeckError('');
+    try {
+      const res = await fetch('/api/review/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'create_deck', title }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok || !json.deck) {
+        setCreateDeckError(json.error || 'Không thể tạo sổ tay.');
+        return;
+      }
+
+      const deck: ReviewNotebookDeck = {
+        id: `custom-${json.deck.id}`,
+        slug: `custom-${json.deck.id}`,
+        title: json.deck.title,
+        subtitle: 'Sổ tay cá nhân của bạn',
+        badge: 'Cá nhân',
+        hskLevel: 1,
+        kind: 'custom',
+        words: [],
+      };
+      setNotebooks((prev) => [...prev, deck]);
+      setSelectedDeckId(deck.id);
+      setActiveMode('list');
+      setNewDeckTitle('');
+      setIsCreateDeckModalOpen(false);
+    } catch (error) {
+      console.error('[ReviewNotebookHub] Không thể tạo sổ tay:', error);
+      setCreateDeckError('Không thể kết nối để tạo sổ tay. Vui lòng thử lại.');
+    } finally {
+      setIsCreatingDeck(false);
+    }
+  };
+
+  const handleDeleteDeck = async (deck: ReviewNotebookDeck) => {
+    if (deck.kind !== 'custom' || deletingDeckId) return;
+    if (!window.confirm(`Xóa sổ tay "${deck.title}"? Các từ trong từ điển chung sẽ không bị xóa.`)) {
+      return;
+    }
+
+    setDeletingDeckId(deck.id);
+    setDeleteDeckError('');
+    try {
+      const res = await fetch('/api/review/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete_deck', deckId: deck.id }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok) {
+        setDeleteDeckError(json.error || 'Không thể xóa sổ tay.');
+        return;
+      }
+
+      const remaining = notebooks.filter((item) => item.id !== deck.id);
+      setNotebooks(remaining);
+      if (selectedDeckId === deck.id) {
+        setSelectedDeckId(remaining[0]?.id ?? '');
+        setActiveMode('list');
+      }
+    } catch (error) {
+      console.error('[ReviewNotebookHub] Không thể xóa sổ tay:', error);
+      setDeleteDeckError('Không thể kết nối để xóa sổ tay. Vui lòng thử lại.');
+    } finally {
+      setDeletingDeckId(null);
+    }
+  };
+
+  const handleDictionarySearch = async () => {
+    const query = dictionaryQuery.trim();
+    if (!query) {
+      setDictionaryResults([]);
+      return;
+    }
+
+    setIsSearchingDictionary(true);
+    setAddWordError('');
+    try {
+      const res = await fetch(`/api/vocabulary?q=${encodeURIComponent(query)}`);
+      const json = await res.json();
+      if (!res.ok) {
+        setAddWordError(json.error || 'Không thể tìm trong từ điển.');
+        return;
+      }
+      setDictionaryResults(json.words ?? []);
+      setHasSearchedDictionary(true);
+    } catch (error) {
+      console.error('[ReviewNotebookHub] Không thể tìm từ trong từ điển:', error);
+      setAddWordError('Không thể kết nối để tìm từ. Vui lòng thử lại.');
+    } finally {
+      setIsSearchingDictionary(false);
+    }
+  };
+
+  const handleAttachDictionaryWord = async (word: DictionaryLookupWord) => {
+    if (currentDeck?.kind !== 'custom') return;
+    setIsAttachingDictionaryWord(word.id);
+    setAddWordError('');
+    try {
+      const res = await fetch('/api/review/progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'add_dictionary_word',
+          deckId: currentDeck.id,
+          wordId: word.id,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok || !json.ok || !json.word) {
+        setAddWordError(json.error || 'Không thể thêm từ vào sổ tay.');
+        return;
+      }
+
+      const added: ReviewWordItem = {
+        id: Number(json.word.id),
+        hanzi: json.word.hanzi,
+        pinyin: json.word.pinyin,
+        meaningVi: json.word.meaningVi,
+        hskLevel: Number(json.word.hskLevel) || 1,
+        partOfSpeech: json.word.partOfSpeech || 'Từ vựng',
+        status: 'unlearned',
+        reps: 0,
+      };
+      setNotebooks((prev) =>
+        prev.map((deck) =>
+          deck.id === currentDeck.id && !deck.words.some((item) => item.id === added.id)
+            ? { ...deck, words: [added, ...deck.words] }
+            : deck,
+        ),
+      );
+    } catch (error) {
+      console.error('[ReviewNotebookHub] Không thể thêm từ điển vào sổ tay:', error);
+      setAddWordError('Không thể kết nối để thêm từ. Vui lòng thử lại.');
+    } finally {
+      setIsAttachingDictionaryWord(null);
     }
   };
 
@@ -937,35 +1116,63 @@ export default function ReviewNotebookHub({
             <span className="rv-global-stat is-emerald">
               Đã thuộc: <strong>{ notebooks.flatMap((n) => n.words).filter((w) => w.status === 'memorized').length }</strong> từ
             </span>
+            <button
+              type="button"
+              className="rv-btn-add-word"
+              onClick={() => {
+                setCreateDeckError('');
+                setIsCreateDeckModalOpen(true);
+              }}
+            >
+              + Tạo sổ tay
+            </button>
           </div>
         </div>
 
+        {deleteDeckError && (
+          <p className="rv-form-error" role="alert">
+            {deleteDeckError}
+          </p>
+        )}
         <div className="rv-deck-tabs" role="tablist">
           {notebooks.map((deck) => {
             const memCount = deck.words.filter((w) => w.status === 'memorized').length;
             const isSelected = deck.id === currentDeck?.id;
             return (
-              <button
-                key={deck.id}
-                type="button"
-                role="tab"
-                aria-selected={isSelected}
-                className={`rv-deck-tab${isSelected ? ' is-active' : ''}`}
-                onClick={() => setSelectedDeckId(deck.id)}
-              >
-                <div className="rv-deck-tab-top">
-                  <span className="rv-deck-badge">{deck.badge}</span>
-                  <span className="rv-deck-count">{deck.words.length} từ</span>
-                </div>
-                <span className="rv-deck-name">{deck.title}</span>
-                <div className="rv-deck-mini-bar">
-                  <span
-                    style={{
-                      width: `${deck.words.length ? Math.round((memCount / deck.words.length) * 100) : 0}%`,
-                    }}
-                  />
-                </div>
-              </button>
+              <div className="rv-deck-tab-wrap" key={deck.id} role="presentation">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  className={`rv-deck-tab${isSelected ? ' is-active' : ''}`}
+                  onClick={() => setSelectedDeckId(deck.id)}
+                >
+                  <div className="rv-deck-tab-top">
+                    <span className="rv-deck-badge">{deck.badge}</span>
+                    <span className="rv-deck-count">{deck.words.length} từ</span>
+                  </div>
+                  <span className="rv-deck-name">{deck.title}</span>
+                  <div className="rv-deck-mini-bar">
+                    <span
+                      style={{
+                        width: `${deck.words.length ? Math.round((memCount / deck.words.length) * 100) : 0}%`,
+                      }}
+                    />
+                  </div>
+                </button>
+                {deck.kind === 'custom' && (
+                  <button
+                    type="button"
+                    className="rv-deck-delete"
+                    aria-label={`Xóa sổ tay ${deck.title}`}
+                    title="Xóa sổ tay cá nhân"
+                    disabled={deletingDeckId !== null}
+                    onClick={() => void handleDeleteDeck(deck)}
+                  >
+                    {deletingDeckId === deck.id ? 'Đang xóa…' : 'Xóa'}
+                  </button>
+                )}
+              </div>
             );
           })}
         </div>
@@ -1174,7 +1381,13 @@ export default function ReviewNotebookHub({
               <button
                 type="button"
                 className="rv-btn-add-word"
-                onClick={() => setIsAddModalOpen(true)}
+                onClick={() => {
+                  setAddWordError('');
+                  setDictionaryQuery('');
+                  setDictionaryResults([]);
+                  setHasSearchedDictionary(false);
+                  setIsAddModalOpen(true);
+                }}
               >
                 + Thêm từ vào sổ tay
               </button>
@@ -2351,6 +2564,69 @@ export default function ReviewNotebookHub({
               </button>
             </div>
             <form onSubmit={handleAddWordSubmit} className="rv-modal-form">
+              {addWordError && (
+                <p className="rv-form-error" role="alert">
+                  {addWordError}
+                </p>
+              )}
+              {currentDeck.kind === 'custom' && (
+                <div className="rv-dictionary-lookup">
+                  <label>
+                    <span>Tìm từ có sẵn trong từ điển</span>
+                    <input
+                      type="search"
+                      value={dictionaryQuery}
+                      onChange={(e) => {
+                        setDictionaryQuery(e.target.value);
+                        setDictionaryResults([]);
+                        setHasSearchedDictionary(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          void handleDictionarySearch();
+                        }
+                      }}
+                      placeholder="Nhập chữ Hán, pinyin hoặc nghĩa..."
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    className="rv-btn-secondary"
+                    onClick={() => void handleDictionarySearch()}
+                    disabled={isSearchingDictionary || !dictionaryQuery.trim()}
+                  >
+                    {isSearchingDictionary ? 'Đang tìm...' : 'Tìm từ'}
+                  </button>
+                  {dictionaryResults.length > 0 && (
+                    <div className="rv-lookup-results">
+                      {dictionaryResults.map((word) => (
+                        <div className="rv-lookup-result" key={word.id}>
+                          <div>
+                            <strong>{word.hanzi}</strong>
+                            <span>{word.pinyin}</span>
+                            <small>{word.meanings[0]?.meaningVi || 'Chưa có nghĩa'}</small>
+                          </div>
+                          <button
+                            type="button"
+                            className="rv-btn-add-word"
+                            onClick={() => void handleAttachDictionaryWord(word)}
+                            disabled={isAttachingDictionaryWord === word.id}
+                          >
+                            {isAttachingDictionaryWord === word.id ? 'Đang thêm...' : 'Thêm'}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {hasSearchedDictionary && !isSearchingDictionary && dictionaryResults.length === 0 && (
+                    <small className="rv-lookup-empty">Không tìm thấy từ phù hợp.</small>
+                  )}
+                  <p className="rv-lookup-divider">
+                    Hoặc thêm từ mới (từ sẽ được lưu vào từ điển chung)
+                  </p>
+                </div>
+              )}
               <div className="rv-form-row">
                 <label>
                   <span>Chữ Hán *</span>
@@ -2437,6 +2713,56 @@ export default function ReviewNotebookHub({
                   disabled={isSubmittingWord}
                 >
                   {isSubmittingWord ? 'Đang lưu...' : '+ Lưu vào sổ tay'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {isCreateDeckModalOpen && (
+        <div className="rv-modal-backdrop" onClick={() => setIsCreateDeckModalOpen(false)}>
+          <div className="rv-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="rv-modal-head">
+              <h3>Tạo sổ tay cá nhân</h3>
+              <button
+                type="button"
+                className="rv-modal-close"
+                onClick={() => setIsCreateDeckModalOpen(false)}
+              >
+                <Icon name="x" size={18} />
+              </button>
+            </div>
+            <form onSubmit={handleCreateDeckSubmit} className="rv-modal-form">
+              <p className="rv-modal-description">
+                Tạo một sổ tay riêng, sau đó thêm từ bạn muốn học và ôn tập.
+              </p>
+              {createDeckError && (
+                <p className="rv-form-error" role="alert">
+                  {createDeckError}
+                </p>
+              )}
+              <label>
+                <span>Tên sổ tay *</span>
+                <input
+                  type="text"
+                  required
+                  maxLength={60}
+                  value={newDeckTitle}
+                  onChange={(e) => setNewDeckTitle(e.target.value)}
+                  placeholder="Ví dụ: Từ mới trong phim"
+                />
+              </label>
+              <div className="rv-modal-actions">
+                <button
+                  type="button"
+                  className="rv-btn-secondary"
+                  onClick={() => setIsCreateDeckModalOpen(false)}
+                >
+                  Huỷ
+                </button>
+                <button type="submit" className="rv-btn-primary" disabled={isCreatingDeck}>
+                  {isCreatingDeck ? 'Đang tạo...' : '+ Tạo sổ tay'}
                 </button>
               </div>
             </form>

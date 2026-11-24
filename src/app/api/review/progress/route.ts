@@ -35,6 +35,33 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, deck: result.rows[0] });
     }
 
+    if (action === 'delete_deck') {
+      const rawDeckId = body.deckId;
+      const deckId =
+        typeof rawDeckId === 'string' && /^custom-\d+$/.test(rawDeckId)
+          ? Number(rawDeckId.slice('custom-'.length))
+          : null;
+      if (deckId === null) {
+        return NextResponse.json({ ok: false, error: 'Sổ tay không hợp lệ.' }, { status: 400 });
+      }
+
+      const result = await pool.query(
+        `DELETE FROM bo_tu_vung
+         WHERE id = $1 AND owner_id = $2 AND kind = 'custom'
+         RETURNING id`,
+        [deckId, userId],
+      );
+      if (result.rowCount === 0) {
+        return NextResponse.json(
+          { ok: false, error: 'Không tìm thấy sổ tay cá nhân.' },
+          { status: 404 },
+        );
+      }
+
+      revalidatePath('/review');
+      return NextResponse.json({ ok: true });
+    }
+
     if (action === 'add_dictionary_word') {
       const rawDeckId = body.deckId;
       const deckId =

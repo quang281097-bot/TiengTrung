@@ -72,8 +72,18 @@
   gap: 10px;
 }
 
+.rv-deck-tab-wrap {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 5px;
+}
+
 .rv-deck-tab {
   display: flex;
+  width: 100%;
+  flex: 1;
   flex-direction: column;
   align-items: flex-start;
   gap: 6px;
@@ -95,6 +105,28 @@
   border-color: #1f4334;
   background: #eef5f0;
   box-shadow: 0 3px 10px rgba(31, 67, 52, 0.1);
+}
+
+.rv-deck-delete {
+  align-self: flex-end;
+  padding: 3px 8px;
+  border: 1px solid #f1c7c4;
+  border-radius: 7px;
+  background: #fff7f6;
+  color: #a3312a;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.rv-deck-delete:hover:not(:disabled) {
+  border-color: #d98b85;
+  background: #feeeec;
+}
+
+.rv-deck-delete:disabled {
+  cursor: wait;
+  opacity: 0.6;
 }
 
 .rv-deck-tab-top {
@@ -2063,6 +2095,94 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
+}
+
+.rv-modal-description {
+  margin: 0;
+  color: #53645a;
+  font-size: 0.88rem;
+}
+
+.rv-form-error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.86rem;
+}
+
+.rv-dictionary-lookup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #dce5df;
+  border-radius: 12px;
+  background: #f7faf8;
+}
+
+.rv-dictionary-lookup > label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.rv-dictionary-lookup > label span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #36473d;
+}
+
+.rv-dictionary-lookup input {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid #cfdcd3;
+  border-radius: 9px;
+  font-size: 0.88rem;
+}
+
+.rv-lookup-results {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 220px;
+  overflow: auto;
+}
+
+.rv-lookup-result {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid #e3eae5;
+  border-radius: 9px;
+  background: #ffffff;
+}
+
+.rv-lookup-result > div {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 10px;
+}
+
+.rv-lookup-result strong {
+  font-size: 1.05rem;
+}
+
+.rv-lookup-result span,
+.rv-lookup-result small,
+.rv-lookup-empty {
+  color: #53645a;
+  font-size: 0.78rem;
+}
+
+.rv-lookup-divider {
+  margin: 4px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid #dce5df;
+  color: #53645a;
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .rv-form-row {

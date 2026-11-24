@@ -91,6 +91,7 @@ export async function getReviewPageData(userId?: string): Promise<ReviewPageData
                   ), 'Từ vựng') AS "partOfSpeech",
                   COALESCE(w.hsk_level, 1) AS "hskLevel"
            FROM tu_vung w
+           WHERE w.hsk_level IS NOT NULL
            ORDER BY COALESCE(w.hsk_level, 1) ASC, w.id ASC`,
         ),
         pool.query(
@@ -99,21 +100,17 @@ export async function getReviewPageData(userId?: string): Promise<ReviewPageData
            JOIN cau_tieng_trung s ON s.id = v.sentence_id
            ORDER BY v.word_id ASC, v.position ASC`,
         ),
-        effectiveUserId
-          ? pool.query(
-              `SELECT word_id AS "wordId", state, reps
-               FROM the_on_tap
-               WHERE user_id = $1`,
-              [effectiveUserId],
-            )
-          : Promise.resolve({ rows: [] }),
-        effectiveUserId
-          ? pool.query(
-              `SELECT CASE WHEN last_study_date >= local_today(id) - 1 THEN current_streak ELSE 0 END AS streak
-               FROM nguoi_dung WHERE id = $1`,
-              [effectiveUserId],
-            )
-          : Promise.resolve({ rows: [] }),
+        pool.query(
+          `SELECT word_id AS "wordId", state, reps
+           FROM the_on_tap
+           WHERE user_id = $1`,
+          [effectiveUserId],
+        ),
+        pool.query(
+          `SELECT CASE WHEN last_study_date >= local_today(id) - 1 THEN current_streak ELSE 0 END AS streak
+           FROM nguoi_dung WHERE id = $1`,
+          [effectiveUserId],
+        ),
         pool.query(
           `SELECT id, title
            FROM bo_tu_vung
@@ -204,7 +201,7 @@ export async function getReviewPageData(userId?: string): Promise<ReviewPageData
       const customDecks = new Map<number, ReviewNotebookDeck>();
       for (const row of customDecksRes.rows) {
         const id = Number(row.id);
-        customDecks.set(id, {
+        const deck: ReviewNotebookDeck = {
           id: `custom-${id}`,
           slug: `custom-${id}`,
           title: row.title,
@@ -213,8 +210,9 @@ export async function getReviewPageData(userId?: string): Promise<ReviewPageData
           hskLevel: 1,
           kind: 'custom',
           words: [],
-        });
-        customNotebooks.push(customDecks.get(id)!);
+        };
+        customDecks.set(id, deck);
+        customNotebooks.push(deck);
       }
 
       for (const row of customWordsRes.rows) {
