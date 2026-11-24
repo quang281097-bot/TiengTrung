@@ -1,35 +1,94 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
-import type { SidebarItem } from '../../data/dashboardData';
+import { courseLevels, primaryNav, secondaryNav } from '../../data/homeData';
+import type { NavLink } from '../../data/homeData';
+import Icon from '../ui/Icon';
 
-export default function Sidebar({ items }: { items: SidebarItem[] }) {
+function isActive(pathname: string, href: string) {
+  if (href === '/') return pathname === '/' || pathname === '/dashboard';
+  return pathname === href.split('?')[0];
+}
+
+function NavItem({ item, pathname }: { item: NavLink; pathname: string }) {
+  const active = isActive(pathname, item.href);
   return (
-    <aside className="sidebar" aria-label="Sidebar navigation">
-      <div className="brand-block">
-        <div className="brand-mark">🀄</div>
-        <div>
-          <p className="brand-name">Trung Hoa</p>
-        </div>
-      </div>
+    <Link
+      href={item.href}
+      className={`lx-nav-item${active ? ' is-active' : ''}`}
+      aria-current={active ? 'page' : undefined}
+    >
+      <Icon name={item.icon} />
+      <span>{item.label}</span>
+    </Link>
+  );
+}
 
-      <nav className="sidebar-nav" aria-label="Main menu">
-        {items.map((item) => (
-          <Link
-            key={item.id}
-            href={item.href}
-            className={`nav-item${item.active ? ' active' : ''}`}
-            aria-current={item.active ? 'page' : undefined}
-          >
-            <span className="nav-icon" aria-hidden="true">{item.icon}</span>
-            <span>{item.label}</span>
-          </Link>
+export default function Sidebar() {
+  const pathname = usePathname() ?? '/';
+  const [coursesOpen, setCoursesOpen] = useState(true);
+  const coursesActive = pathname === '/lessons';
+
+  return (
+    <aside className="lx-sidebar" aria-label="Điều hướng chính">
+      <Link href="/" className="lx-brand">
+        <span className="lx-brand-name">lǎoshi.</span>
+        <span className="lx-brand-tagline">Học mỗi ngày, tiến xa hơn</span>
+      </Link>
+
+      <p className="lx-nav-heading">Không gian học tập</p>
+
+      <nav className="lx-nav">
+        {primaryNav.map((item) => (
+          <NavItem key={item.id} item={item} pathname={pathname} />
+        ))}
+
+        <button
+          type="button"
+          className={`lx-nav-item lx-nav-toggle${coursesActive ? ' is-active' : ''}`}
+          aria-expanded={coursesOpen}
+          aria-controls="lx-course-levels"
+          onClick={() => setCoursesOpen((open) => !open)}
+        >
+          <Icon name="book" />
+          <span>Khoá học</span>
+          <Icon name="chevron-down" size={16} className="lx-nav-chevron" />
+        </button>
+
+        {coursesOpen && (
+          <ul id="lx-course-levels" className="lx-subnav">
+            {courseLevels.map((level) => (
+              <li key={level.id}>
+                <Link
+                  href={level.href}
+                  className={`lx-subnav-item${level.current ? ' is-current' : ''}`}
+                >
+                  <span>{level.label}</span>
+                  {level.current && <small>Đang học</small>}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        {secondaryNav.map((item) => (
+          <NavItem key={item.id} item={item} pathname={pathname} />
         ))}
       </nav>
 
-      <Link href="/settings" className="nav-item settings-item">
-        <span className="nav-icon" aria-hidden="true">⚙️</span>
-        <span>Cài đặt</span>
-      </Link>
+      <div className="lx-sidebar-foot">
+        <div className="lx-motto">
+          <p className="lx-motto-kicker">Chậm mà chắc</p>
+          <p className="lx-motto-text">Mỗi bài học nhỏ, một bước tiến lớn.</p>
+        </div>
+        <Link href="/settings" className="lx-help-link">
+          Trung tâm trợ giúp
+          <Icon name="external" size={13} />
+        </Link>
+      </div>
     </aside>
   );
 }

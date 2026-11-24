@@ -1,16 +1,20 @@
-import type { StatCard as StatCardType } from '../../data/dashboardData';
+import type { HomeStat } from '../../data/homeData';
+import Icon from '../ui/Icon';
 
-export default function StatsCard({ card }: { card: StatCardType }) {
-  const accentClass = `stat-card stat-card-${card.accent}`;
-
+export default function StatsCard({ stat }: { stat: HomeStat }) {
   return (
-    <article className={accentClass}>
-      <div className="stat-icon" aria-hidden="true">{card.icon}</div>
-      <div className="stat-body">
-        <p className="stat-label">{card.label}</p>
-        <h3>{card.value}</h3>
-        <span>{card.detail}</span>
+    <article className="lx-card lx-stat">
+      <div className="lx-stat-top">
+        <p className="lx-stat-label">{stat.label}</p>
+        <span className={`lx-stat-icon${stat.highlight ? ' is-warm' : ''}`}>
+          <Icon name={stat.icon} size={15} />
+        </span>
       </div>
+      <p className="lx-stat-value">
+        <strong>{stat.value}</strong>
+        <span>{stat.unit}</span>
+      </p>
+      <p className="lx-stat-hint">{stat.hint}</p>
     </article>
   );
 }
